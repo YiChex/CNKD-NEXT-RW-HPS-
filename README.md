@@ -4,9 +4,9 @@
 
 CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中的配置可理解性、原版大厅链路兼容、模组地图加载、长期运维和低延迟诊断问题。项目适合个人服主、战队活动服、公开列表服、团战服、FFA 混战服、生存地图服和固定地图活动服。
 
-本仓库提供文档和发布包下载。首次安装请选用完整 ZIP，并以实际附件中的配置、启动脚本和 SDK 为准。 [GitHub Releases](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases)
+本仓库提供文档和发布包下载。首次安装请选用完整 ZIP，并以实际附件中的配置、启动脚本和 SDK 为准。 [GitHub Releases](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases)
 
-**当前发布版 `2.3.2`** 使用服务端 `1.1.24`，含手动 Start 默认 5 秒倒计时、普通玩家进出 S 队修复及 EIRS。下载 Assets 中的 `CNKD.NEXT.2.3.2.zip` 并解压到独立实例目录。 [下载 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/tag/2.3.2) · [核对版本与 SHA-256](docs/RELEASE-VERSIONS-CN.md)
+**当前发布版 `2.3.2`** 使用服务端 `1.1.24`，含手动 Start 默认 5 秒倒计时、普通玩家进出 S 队修复及 EIRS。下载 Assets 中的 `CNKD.NEXT.2.3.2.zip` 并解压到独立实例目录。 [下载 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/tag/2.3.2) · [核对版本与 SHA-256](docs/RELEASE-VERSIONS-CN.md)
 
 ## 快速入口
 
@@ -94,7 +94,7 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 
 ## 最小部署流程
 
-1. 下载 Releases 中的扁平 ZIP。解压后在同一目录看到 `Server-All.jar`、`data/` 和启动脚本。 [下载入口](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/latest)
+1. 下载 Releases 中的扁平 ZIP。解压后在同一目录看到 `Server-All.jar`、`data/` 和启动脚本。 [下载入口](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/latest)
 2. 解压到独立目录，不要把多个实例混用同一个 `data` 目录。
 3. 编辑 `data/ServerConfig.json`，至少确认端口、服名、人数和 AI 开关。
 4. 安装 Java 17。Linux 在包目录运行 `sh ./start.sh`，Windows 运行 `.\start-windows.bat`。

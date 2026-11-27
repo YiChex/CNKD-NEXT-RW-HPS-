@@ -14,7 +14,7 @@ GitHub Release 标签用于识别公开发行。服务端自身版本可在控�
 | 运行形态 | 单房间 `start`，`allow_all`，公共列表默认关闭 |
 | 插件 API / EIRS | `1.3.0` / `identity.reporter` `1.1.0`（V1，随包批准锁） |
 
-新版包含普通玩家进入及离开 S 队的修复，并把手动 Start 倒计时独立为 `manualStartCountdownSeconds`。支持 0–300 秒，默认 5 秒，`0` 为立即开局。旧配置缺少该字段时使用默认 5 秒。新版 Windows 脚本自带 Java 17 短临时目录处理。API 1.3.0 提供可选的只读统计接口。战报采集插件和报告服务需要独立配套安装。 [GitHub Release 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/tag/2.3.2)
+新版包含普通玩家进入及离开 S 队的修复，并把手动 Start 倒计时独立为 `manualStartCountdownSeconds`。支持 0–300 秒，默认 5 秒，`0` 为立即开局。旧配置缺少该字段时使用默认 5 秒。新版 Windows 脚本自带 Java 17 短临时目录处理。API 1.3.0 提供可选的只读统计接口。战报采集插件和报告服务需要独立配套安装。 [GitHub Release 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/tag/2.3.2)
 
 发布附件的 `RELEASE-INFO.json` 与 JAR Manifest 记录宿主构建的来源。GitHub 自动生成的 Source code ZIP/TAR 对应本仓库文档标签，部署请选择 Assets 中的扁平 ZIP。
 
@@ -30,7 +30,7 @@ GitHub Release 标签用于识别公开发行。服务端自身版本可在控�
 | 运行形态 | 单房间 `start`，`allow_all`，公共列表默认关闭 |
 | 插件 API / EIRS | `1.2.0` / `identity.reporter` `1.1.0`（V1，随包提供匹配的锁） |
 
-历史数据基于 2026-11-27 核对的原附件。 [GitHub Release 2.3.1](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/tag/2.3.1)
+历史数据基于 2026-11-27 核对的原附件。 [GitHub Release 2.3.1](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/tag/2.3.1)
 
 **2.3.1 的发布说明与原附件有差异。** 原附件仍为 10 月 22 日的内部 1.1.22 构建，当时的 `autoStartCountdownSeconds=5` 只服务于自动开局。需要手动倒计时和普通玩家 S 队修复的服主可升级到 2.3.2，并按上表核对指纹。
 
