@@ -8,7 +8,7 @@
 
 ## Lettre à la communauté de Rusted Warfare
 
-Nos premiers remerciements vont à **Dr. (deng-rui), auteur de RW-HPS, et à toutes les personnes qui ont contribué au projet d’origine**. Les modalités de maintenance et de publication de RW-HPS ont évolué. CNKD NEXT leur doit ses fondations, et nous continuerons à les créditer dans le code et la documentation. [RW-HPS](https://github.com/RW-HPS/RW-HPS)
+Nos premiers remerciements vont à **Dr. (deng-rui), auteur de RW-HPS, et à toutes les personnes qui ont contribué au projet d’origine**. Les modalités de maintenance et de publication de RW-HPS ont évolué. CNKD NEXT leur doit ses fondations, et nous continuerons à les créditer dans le code et la documentation. [RW-HPS](https://github.com/RW-HPS/RW-HPS) · [Contributeurs du projet d’origine RW-HPS](../../README.md#contributors)
 
 L’équipe CNKD poursuit ce travail sur la base de RW-HPS depuis février 2026. Après mûre réflexion, nous estimons que le serveur à salle unique est assez mûr pour être entretenu à plusieurs. La communauté a encore bien des ressources à nous faire découvrir. Maintenant que le code source du serveur est public, nous pouvons enfin l’annoncer : nous nous reconvertissons dans *Wuthering Waves*. 😄
 

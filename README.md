@@ -8,7 +8,7 @@
 
 ## 写给铁锈战争社区
 
-首先感谢 **RW-HPS 原作者 Dr.（deng-rui）及上游贡献者**。无论上游后来如何调整开源与维护方式，CNKD NEXT 都站在巨人的肩膀之上。 [RW-HPS](https://github.com/RW-HPS/RW-HPS)
+首先感谢 **RW-HPS 原作者 Dr.（deng-rui）及上游贡献者**。无论上游后来如何调整开源与维护方式，CNKD NEXT 都站在巨人的肩膀之上。 [RW-HPS](https://github.com/RW-HPS/RW-HPS) · [上游贡献者](#contributors)
 
 从 2026 年 2 月开始，CNKD 团队一直在 RW-HPS 的基础上维护这个项目。经过审慎评估，我们认为单房间服务端已经足够成熟，可以交给更多人一起维护，团队也将探索更多项目。我们始终相信社区的无限可能。
 
@@ -146,6 +146,20 @@
 7. 需要开放列表时，再确认包类型、端口公网可达和 `common.autoUpList=true`。
 
 已部署的实例可按备份、迁移、启动检查、真实客户端回归的顺序升级。 [单房间部署指南](docs/DEPLOYMENT-GUIDE-CN.md)
+
+## Contributors
+
+感谢提供项目基础的 **RW-HPS 上游贡献者**。首先致谢原作者 Dr.。 [deng-rui 的 GitHub 主页](https://github.com/deng-rui)
+
+[493505110](https://github.com/493505110) · [Mitpoppy](https://github.com/Mitpoppy) · [zerodegress](https://github.com/zerodegress) · [yuchen1204](https://github.com/yuchen1204) · [code-factor](https://github.com/code-factor) · [allureluoli](https://github.com/allureluoli) · [Minxyzgo](https://github.com/Minxyzgo)
+
+[cloudwindy](https://github.com/cloudwindy) · [yiyungent](https://github.com/yiyungent) · [ReSatori](https://github.com/ReSatori) · [StefanoB2018](https://github.com/StefanoB2018) · [LingASDJ](https://github.com/LingASDJ) · [ssw324](https://github.com/ssw324) · [1dNDN](https://github.com/1dNDN)
+
+[alittlewhitey](https://github.com/alittlewhitey) · [Jaspeterest](https://github.com/Jaspeterest) · [BHLuotianyi](https://github.com/BHLuotianyi) · [npldys](https://github.com/npldys) · [shishanyue](https://github.com/shishanyue) · [MZZZ-T](https://github.com/MZZZ-T) · [SICKCC754](https://github.com/SICKCC754)
+
+[3294493577](https://github.com/3294493577) · [AdminHcat](https://github.com/AdminHcat) · [Luosimojk233](https://github.com/Luosimojk233) · [TXuan520](https://github.com/TXuan520) · [Tonyha7](https://github.com/Tonyha7) · [kabaka9527](https://github.com/kabaka9527) · [ruabbit233](https://github.com/ruabbit233)
+
+名单取自 RW-HPS 仓库的公开 GitHub 贡献记录。 [RW-HPS 贡献者页面](https://github.com/RW-HPS/RW-HPS/graphs/contributors)
 
 ## 许可证与使用边界
 
