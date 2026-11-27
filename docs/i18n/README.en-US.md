@@ -24,6 +24,10 @@ A friendly nod to the AI tool teams that helped along the way 😄 [OpenAI Group
 
 **CNKD 薯条 🍟** · [Join QQ group 910085695](https://qm.qq.com/q/YHtlMJwzUm)
 
+<p align="center">
+  <a href="../assets/CNKD-LOGO.png"><img src="../assets/CNKD-LOGO.png" width="360" alt="CNKD logo"></a>
+</p>
+
 ## Plugin examples and official plugins
 
 | Plugin | What it does | Source and downloads |

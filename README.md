@@ -24,6 +24,10 @@
 
 **CNKD 薯条 🍟** · [加入 QQ 交流群 910085695](https://qm.qq.com/q/YHtlMJwzUm)
 
+<p align="center">
+  <a href="docs/assets/CNKD-LOGO.png"><img src="docs/assets/CNKD-LOGO.png" width="360" alt="CNKD 标志"></a>
+</p>
+
 ## 从这里找到插件
 
 | 插件 | 用途 | 源码与下载 |

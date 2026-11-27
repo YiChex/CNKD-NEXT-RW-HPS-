@@ -24,6 +24,10 @@ Un clin d’œil aux équipes des outils d’IA qui nous ont aidés en route �
 
 **CNKD 薯条 🍟** · [Rejoindre le groupe QQ 910085695](https://qm.qq.com/q/YHtlMJwzUm)
 
+<p align="center">
+  <a href="../assets/CNKD-LOGO.png"><img src="../assets/CNKD-LOGO.png" width="360" alt="Logo de CNKD"></a>
+</p>
+
 ## Exemples et extensions officielles
 
 | Extension | Usage | Sources et téléchargement |

@@ -24,6 +24,10 @@
 
 **CNKD 薯条 🍟** · [Вступить в группу QQ 910085695](https://qm.qq.com/q/YHtlMJwzUm)
 
+<p align="center">
+  <a href="../assets/CNKD-LOGO.png"><img src="../assets/CNKD-LOGO.png" width="360" alt="Логотип CNKD"></a>
+</p>
+
 ## Примеры и официальные плагины
 
 | Плагин | Назначение | Код и загрузка |
