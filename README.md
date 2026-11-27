@@ -6,7 +6,7 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 
 本仓库提供文档和发布包下载。首次安装请选用完整 ZIP，并以实际附件中的配置、启动脚本和 SDK 为准。 [GitHub Releases](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases)
 
-> **2.3.1 附件核对**：2026-11-27 下载的 `CNKD.NEXT.2.3.1.zip` 内含 2026-10-22 构建。若你是为了手动 Start 倒计时或普通玩家进出 S 队修复而升级，请先核对实际 JAR。 [发布版本与附件核对](docs/RELEASE-VERSIONS-CN.md)
+**当前发布版 `2.3.2`** 使用服务端 `1.1.24`，含手动 Start 默认 5 秒倒计时、普通玩家进出 S 队修复及 EIRS。下载 Assets 中的 `CNKD.NEXT.2.3.2.zip` 并解压到独立实例目录。 [下载 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/tag/2.3.2) · [核对版本与 SHA-256](docs/RELEASE-VERSIONS-CN.md)
 
 ## 快速入口
 
@@ -23,7 +23,7 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 
 ## 当前定位
 
-| 项目 | 2.3.1 附件默认配置 |
+| 项目 | 2.3.2 附件默认配置 |
 |:---|:---|
 | 运行形态 | 纯 `start` 单房间，无需 Relay 才能运行 |
 | Java | Java 17 或更高版本 |
@@ -32,19 +32,22 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 | 默认单位上限 | `1000` |
 | 添加 AI | `gameplay.enableAI=false`，按玩法显式开启 |
 | 自动开局 | 关闭，`autoStartMinPlayerSize=-1` |
+| 手动开局 | 默认倒计时 5 秒，可通过 `gameplay.manualStartCountdownSeconds` 修改 |
+| 普通玩家调位 | 可在战役室调整自己的位置和队伍，比赛开始或启用相应大厅锁后受限 |
 | 自动返回战役室 | 关闭，保持原版结束/重置边界清晰 |
 | 全单位死亡自动移除 | 关闭，保持原版玩家存留行为 |
 | 模组地图发现与自动提取 | 开启 |
 | 单房间低延迟快路径 | 开启，诊断采样默认关闭 |
 | 公共列表 | 默认关闭 `common.autoUpList=false` |
 | 远程管理 | Web 与 RCON 的独立监听端口默认均为 `0` |
-| 插件 | 随包提供 EIRS `identity.reporter` 1.1.0 与批准锁。SDK 为 1.2.0 |
+| 插件 | 随包提供 EIRS `identity.reporter` 1.1.0 与批准锁。SDK 为 1.3.0 |
 
 ## 主要能力
 
 ### 原版大厅与对局链路
 
-- 房主按钮和有权限玩家的 `.start` 用于开始对局。后台 `start` 用于启动服务端入口。自动开局按人数和独立倒计时配置运行。
+- 房主按钮和有权限玩家的 `.start` 进入手动倒计时。后台用 `gamestart status` 查询开局进度，`start` 用于启动服务端。自动开局按人数门槛和自己的倒计时运行。
+- 观战玩家在有空闲参战槽位时可以返回普通位置。地图锁只限制换图，位置锁和队伍锁各自配置。
 - 尊重房主在原版大厅中对核弹、资金、收入、迷雾和初始单位的选择；服务端配置作为新房间默认值。
 - 保留原版投降按钮链路。团队模式可显示投降申请进度，`.surrenderstatus` 可查询当前进度；单人投降模式可配置开启。
 - `.battleroom` 使用原版战役室返回路径；自动返回默认关闭，避免与服务器强制重置提示混淆。
@@ -91,15 +94,15 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 
 ## 最小部署流程
 
-1. 从 Releases 下载完整发布包。2.3.1 ZIP 解压后在顶部可见 `Server-All.jar`、`data/` 和启动脚本。 [下载入口](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases)
+1. 下载 Releases 中的扁平 ZIP。解压后在同一目录看到 `Server-All.jar`、`data/` 和启动脚本。 [下载入口](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/latest)
 2. 解压到独立目录，不要把多个实例混用同一个 `data` 目录。
 3. 编辑 `data/ServerConfig.json`，至少确认端口、服名、人数和 AI 开关。
-4. Linux 运行 `sh ./start.sh`。Windows 运行 `.\start-windows.bat`，若遇到 Java 17 网络选择器错误，参照部署指南。
+4. 安装 Java 17。Linux 在包目录运行 `sh ./start.sh`，Windows 运行 `.\start-windows.bat`。
 5. 启动后先执行 `startmode bootcheck` 和 `config check`。
 6. 添加模组后执行 `mods`、`maps 1`，确认模组和地图已被发现。
 7. 需要开放列表时，再确认包类型、端口公网可达和 `common.autoUpList=true`。
 
-完整部署、升级、模组地图和异常处理见 [单房间部署指南](docs/DEPLOYMENT-GUIDE-CN.md)。
+已部署的实例可按备份、迁移、启动检查、真实客户端回归的顺序升级。 [单房间部署指南](docs/DEPLOYMENT-GUIDE-CN.md)
 
 ## 许可证与使用边界
 

@@ -1,6 +1,22 @@
 # 发布版本与附件核对
 
-GitHub Release 标签、附件里的服务端构建和插件 API 各有自己的版本。下载、升级和反馈问题时，建议记录 Release 标签、附件文件名及 SHA-256。旧构建的控制台 `version` 可能只显示 `CNKD NEXT S`。
+GitHub Release 标签用于识别公开发行。服务端自身版本可在控制台 `version` 及附件中的 `RELEASE-INFO.json` 查询，插件兼容范围看实际 SDK 版本。
+
+## GitHub 2.3.2
+
+| 项目 | 值 |
+| --- | --- |
+| Release 标签 | `2.3.2` |
+| 扁平 ZIP | `CNKD.NEXT.2.3.2.zip`（37,031,259 字节） |
+| ZIP SHA-256 | `bed26984bcc30e8defe3a95e564dbdc1e57a8213f9873c0a13de520cab9d6b74` |
+| 服务端 / 构建时间 | `1.1.24` / `2026-11-19 12:26:03` |
+| `Server-All.jar` SHA-256 | `92950c42de90e4aced56a12a9975f3098d689e7d1e75b14a0aeec9ad93e85007` |
+| 运行形态 | 单房间 `start`，`allow_all`，公共列表默认关闭 |
+| 插件 API / EIRS | `1.3.0` / `identity.reporter` `1.1.0`（V1，随包批准锁） |
+
+新版包含普通玩家进入及离开 S 队的修复，并把手动 Start 倒计时独立为 `manualStartCountdownSeconds`。支持 0–300 秒，默认 5 秒，`0` 为立即开局。旧配置缺少该字段时使用默认 5 秒。新版 Windows 脚本自带 Java 17 短临时目录处理。API 1.3.0 提供可选的只读统计接口。战报采集插件和报告服务需要独立配套安装。 [GitHub Release 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/tag/2.3.2)
+
+发布附件的 `RELEASE-INFO.json` 与 JAR Manifest 记录宿主构建的来源。GitHub 自动生成的 Source code ZIP/TAR 对应本仓库文档标签，部署请选择 Assets 中的扁平 ZIP。
 
 ## GitHub 2.3.1
 
@@ -14,18 +30,16 @@ GitHub Release 标签、附件里的服务端构建和插件 API 各有自己的
 | 运行形态 | 单房间 `start`，`allow_all`，公共列表默认关闭 |
 | 插件 API / EIRS | `1.2.0` / `identity.reporter` `1.1.0`（V1，随包提供匹配的锁） |
 
-以上数据基于 2026-11-27 下载的附件。下载前可查看该版本的发布记录。 [GitHub Releases 2.3.1](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/tag/2.3.1)
+历史数据基于 2026-11-27 核对的原附件。 [GitHub Release 2.3.1](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases/tag/2.3.1)
 
-**发布说明与附件有差异。** 发布说明列出了手动 Start 默认 5 秒和普通玩家自助观战修复，当前附件的 JAR 与 10 月 22 日的内部 1.1.22 构建一致。附件没有 `gameplay.manualStartCountdownSeconds` 的运行时实现，内置的 `autoStartCountdownSeconds=5` 只服务于自动开局。此附件也未包含随后统一 S 队进出及锁定处理的修复。若升级目标是这两项修复，请先核对目标附件的实际构建。
-
-内部 1.1.23 构建包含手动倒计时（默认 5 秒，`manualStartCountdownSeconds` 支持 0–300 秒）、普通玩家 S 队进出修复和 Windows 启动脚本兼容修正。内部 1.1.24 候选在此基础上增加可选的赛后统计，宿主 SDK 升到 1.3.0。请使用明确配套的宿主、插件及 SDK。
+**2.3.1 的发布说明与原附件有差异。** 原附件仍为 10 月 22 日的内部 1.1.22 构建，当时的 `autoStartCountdownSeconds=5` 只服务于自动开局。需要手动倒计时和普通玩家 S 队修复的服主可升级到 2.3.2，并按上表核对指纹。
 
 ## 本地核对与回报
 
 Linux：
 
 ```sh
-sha256sum CNKD.NEXT.2.3.1.zip
+sha256sum -c CNKD.NEXT.2.3.2.zip.sha256
 sha256sum Server-All.jar
 unzip -p Server-All.jar META-INF/MANIFEST.MF
 ```
@@ -33,7 +47,7 @@ unzip -p Server-All.jar META-INF/MANIFEST.MF
 Windows PowerShell：
 
 ```powershell
-Get-FileHash -Algorithm SHA256 .\CNKD.NEXT.2.3.1.zip
+Get-FileHash -Algorithm SHA256 .\CNKD.NEXT.2.3.2.zip
 Get-FileHash -Algorithm SHA256 .\Server-All.jar
 ```
 

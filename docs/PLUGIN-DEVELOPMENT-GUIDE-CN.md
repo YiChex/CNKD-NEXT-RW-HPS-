@@ -4,8 +4,8 @@
 
 ## 1. 兼容边界
 
-- GitHub 2.3.1 附件的插件 API 为 `1.2.0`，以 `plugin-sdk/sdk-manifest.json` 和随包的 API JAR 为准。 `plugin.json` 中的 `apiVersion: 2` 表示描述符代际，`supportedVersions` 才声明宿主 API 版本范围。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
-- 宿主建议使用 Java 17，2.3.1 的 V2 归档检查要求插件字节码目标为 Java 11 或更低。随包 Java、Kotlin 模板已设置目标。
+- GitHub 2.3.2 随包插件 API 为 `1.3.0`，以 `plugin-sdk/sdk-manifest.json` 和随包 API JAR 为准。`plugin.json` 中的 `apiVersion: 2` 表示描述符代际，`supportedVersions` 声明宿主 API 版本范围。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
+- 宿主建议使用 Java 17。V2 归档检查要求插件字节码目标为 Java 11 或更低，随包 Java 和 Kotlin 模板已设置目标。
 - 插件公共依赖只允许 `net.rwhps.server.plugin.api.*`。
 - 使用发布包内 `plugin-sdk/` 的 API JAR，不要混用其他版本。
 - 插件只能在完整重启时加载；当前不承诺生产热卸载。
@@ -27,7 +27,7 @@
   "main": "example.plugin.ExamplePlugin",
   "description": "A small CNKD NEXT plugin",
   "version": "1.0.0",
-  "supportedVersions": ">= 1.2.0",
+  "supportedVersions": ">= 1.3.0",
   "capabilities": ["player-commands"]
 }
 ```
@@ -50,6 +50,7 @@
 | `broadcast` | 单人或全房间系统消息 | 文本最多 2000 字符 |
 | `scheduler` | 一次性和周期任务 | 周期最小 100 ms，任务必须短小 |
 | `read-state` | 房间、地图、模组及允许公开给插件的配置快照 | API 1.2.0 提供的只读能力，没有逐单位状态或命令裁决接口 |
+| `read-statistics` | `context.statistics()`，读取有界统计记录 | API 1.3.0。排他采集，记录持久化后再按序确认 |
 
 未在描述符声明的能力，调用时会失败。不要通过捕获异常绕过能力检查；修改描述符后必须重新校验和审批。
 
@@ -90,7 +91,7 @@ public final class ExamplePlugin implements CnkdPlugin {
 
 事件是不可变观察通知，不是拦截器；插件不能依赖事件作为权限、计费或对局裁决的唯一来源。事件压力过高时允许丢弃，插件应容忍缺失、重复、延迟和乱序。
 
-当前 SDK 没有逐条游戏操作审计、游戏命令拦截或全地图观测接口。API 1.3.0 的 `read-statistics` 只面向兼容它的宿主和统计插件，2.3.1 附件的 SDK 1.2.0 无法提供该能力。
+API 1.3.0 的统计接口提供只读记录、按序确认和流状态，供单个受控采集插件使用。启用采集需要兼容宿主和独立插件，战报页面还需配套服务。GitHub 2.3.2 扁平包提供统计接口与 SDK。逐条游戏操作、命令拦截和全图视野目前不属于公共插件契约。
 
 不要创建裸 `Thread`、`ExecutorService`、全局协程作用域或不受控定时器。服务端停止时无法回收这些资源，容易造成内存泄漏和下次实例启动异常。
 
@@ -123,7 +124,7 @@ V2 日志受根配置中的 `pluginLogging` 控制：
 
 ## 7. 构建、校验和审批
 
-发布包内提供 `plugin-sdk/java-minimal`、`plugin-sdk/kotlin-minimal` 和 API 1.2.0 JAR。以下命令在发布包根目录执行，需要本机 Gradle。模板通过 `compileOnly` 使用随包 SDK：
+发布包内提供 `plugin-sdk/java-minimal`、`plugin-sdk/kotlin-minimal` 和 API 1.3.0 JAR。以下命令在发布包根目录执行，需要本机 Gradle。模板通过 `compileOnly` 使用随包 SDK：
 
 ```powershell
 gradle -p .\plugin-sdk\java-minimal jar
@@ -134,8 +135,8 @@ Get-ChildItem -LiteralPath .\plugin-sdk\java-minimal\build\libs -Filter '*.jar'
 
 ```powershell
 .\plugin-sdk\cnkd-plugin-tool.bat validate .\data\plugins\example.jar
-.\plugin-sdk\cnkd-plugin-tool.bat matrix .\data\plugins --server-api 1.2.0
-.\plugin-sdk\cnkd-plugin-tool.bat lock .\data\plugins --approved-by "reviewer" --server-api 1.2.0 --output plugin-lock.next.json
+.\plugin-sdk\cnkd-plugin-tool.bat matrix .\data\plugins --server-api 1.3.0
+.\plugin-sdk\cnkd-plugin-tool.bat lock .\data\plugins --approved-by "reviewer" --server-api 1.3.0 --output plugin-lock.next.json
 ```
 
 Linux 用 `sh ./plugin-sdk/cnkd-plugin-tool.sh` 执行同样的子命令。工具将 `plugin-lock.next.json` 写到被检查的插件目录。比较新旧锁，确认所有应启用的归档都被批准，多插件实例应保留随包 EIRS 等已有条目。停服并备份原锁后，将审核后的新锁命名为 `plugin-lock.json`。升级或回滚时同时替换插件归档和匹配的锁，保留插件私有数据。完整重启后执行：

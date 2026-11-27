@@ -1,6 +1,6 @@
 # CNKD NEXT 配置参考
 
-主配置文件是 `data/ServerConfig.json`。下表默认值以 2026-11-27 核对的公开 2.3.1 附件为准。旧实例保留用户设定，新增字段的生效取决于实际 JAR。修改前请备份，端口、最大玩家槽位和 Netty worker 等启动期参数需要重启。对于可运行期更新的字段，在没有开局或赛后转换时执行 `reloadconfig`，再用 `config check` 和 `startmode bootcheck` 核对结果。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
+主配置文件是 `data/ServerConfig.json`。下表按 2.3.2 扁平包的模板列出默认值。旧实例保留用户设定，新增字段的生效取决于实际 JAR。修改前请备份，端口、最大玩家槽位和 Netty worker 等启动期参数需要重启。对于可运行期更新的字段，在没有开局或赛后转换时执行 `reloadconfig`，再用 `config check` 和 `startmode bootcheck` 核对结果。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
 
 ## 配置优先级
 
@@ -49,7 +49,7 @@
 | `rconPasswd` | `RW-HPS` | RCON 密码，启用后必须修改 |
 | `webPort` | `0` | Web 端口，0 表示关闭 |
 | `webToken` | `RW-HPS` | Web Token，启用后必须修改 |
-| `webHOST` | 空 | Web 绑定地址 |
+| `webHOST` | 空 | 校验 HTTP Host 请求头。监听范围还需用防火墙或代理限制 |
 | `sslEnable` | `false` | SSL 主链路开关 |
 | `sslMixEnable` | `false` | SSL 混合链路开关 |
 | `sslPasswd` | `RW-HPS` | SSL 相关密码 |
@@ -71,6 +71,7 @@
 | `startMinPlayerSize` | `-1` | 手动开始最低人数，-1 不限制 |
 | `autoStartMinPlayerSize` | `-1` | 自动开局人数，-1 关闭 |
 | `autoStartCountdownSeconds` | `5` | 自动开局倒计时 |
+| `manualStartCountdownSeconds` | `5` | 手动开局倒计时，0–300 秒。0 表示立即提交开局 |
 | `maxGameIngTime` | `7200` | 单局最长时间，秒，-1 不限 |
 | `maxOnlyAIGameIngTime` | `3600` | 只剩 AI/无人时兜底时间，秒，-1 不限 |
 | `enableAI` | `false` | 是否允许房主/管理员添加 AI |
@@ -86,7 +87,7 @@
 | `modsLoadErrorPrint` | `false` | 是否打印更多模组错误信息 |
 | `saveRePlayFile` | `true` | 是否保存回放 |
 
-自动开局须满足 `autoStartMinPlayerSize`，默认人数门槛为 `-1`，即关闭自动开局。新版构建另有 `manualStartCountdownSeconds`，默认 5 秒，支持 0–300 秒，`0` 表示立即开局。当前公开 2.3.1 附件只读取自动开局字段。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
+自动开局须满足 `autoStartMinPlayerSize`，默认人数门槛为 `-1`，即关闭自动开局。两种倒计时独立，自动开局不叠加手动等待。手动倒计时期间可由有权限的人取消，发起人失去权限、断线或大厅状态变化会重新检查开局条件。 [开局指令](COMMAND-REFERENCE-CN.md)
 
 `map ping` 不按普通聊天长度拦截；普通消息仍受 `maxMessageLen` 约束。
 
@@ -120,7 +121,7 @@
 | `enableAutoKickPlayerWhenAllUnitsDestroyed` | `false` | 全单位死亡后自动移除真人玩家 |
 | `autoKickPlayerWhenAllUnitsDestroyedMessage` | 默认中文提示 | 自动移除时客户端提示文本 |
 
-位置锁、队伍锁和 `.teamlock` 独立于地图选择。新版统一修复普通玩家 S 队进出路径后，位置或队伍锁都可限制相应的自助观战操作，管理员例外分别由两项 `adminCanOverride…Rules` 控制。旧构建在部分客户端入口和退出 S 队时可能表现不同。 [版本对应关系](RELEASE-VERSIONS-CN.md)
+位置锁、队伍锁和 `.teamlock` 独立于地图选择。进入和退出 S 队涉及位置和队伍校验，任一对应的锁都可能限制普通玩家自助操作。管理员例外分别由 `adminCanOverridePositionRules` 和 `adminCanOverrideTeamRules` 控制。普通玩家换位也受空位、对局阶段和当前玩法规则影响。 [调位和观战指令](COMMAND-REFERENCE-CN.md#5-自行调位观战和代管)
 
 自动返回和服务器强制重置是两个不同的结束链路。只有 `enableGameOverBattleRoomReturn=true` 才会发出自动返回战役室提示并调用原版链路；保持 `false` 时使用强制重置链路。
 

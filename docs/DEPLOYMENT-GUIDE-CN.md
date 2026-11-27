@@ -4,7 +4,7 @@
 
 ## 1. 发布包选择
 
-从 GitHub Releases 的 Assets 下载完整部署 ZIP。`2.3.1` 对应 `CNKD.NEXT.2.3.1.zip`，包内 JAR、配置与启动脚本同层次解压到指定实例目录。升级前请核对附件内的实际构建，手动 Start 倒计时与 S 队修复存在版本差异。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
+从 GitHub Releases 的 Assets 下载 `CNKD.NEXT.2.3.2.zip` 及其 `.sha256` 文件并校验。ZIP 为平铺布局，JAR、配置和启动脚本解压到指定实例目录。最新版控制台应显示 `CNKD NEXT 1.1.24`。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
 
 历史发行中常见的包类型：
 
@@ -18,7 +18,7 @@
 
 ## 2. 环境要求
 
-- Java 17 或更高版本。
+- 推荐 Java 17。使用其他 JDK 版本时，先在隔离实例确认 Headless 引擎和插件可加载。
 - Linux 需要 `unzip` 或其他能保留 UTF-8 文件名的解压工具。
 - 服务端端口必须同时放行云安全组、系统防火墙、面板映射和客户端实际连接端口。
 - 模组服建议至少预留 1 GB 内存；大型模组、100 人房间或 1000 单位上限应按实际地图压测。
@@ -32,9 +32,10 @@ java -version
 ## 3. Linux 首次部署
 
 ```sh
-mkdir -p "$HOME/cnkd-next-2.3.1"
-unzip CNKD.NEXT.2.3.1.zip -d "$HOME/cnkd-next-2.3.1"
-cd "$HOME/cnkd-next-2.3.1"
+sha256sum -c CNKD.NEXT.2.3.2.zip.sha256
+mkdir -p "$HOME/cnkd-next-2.3.2"
+unzip CNKD.NEXT.2.3.2.zip -d "$HOME/cnkd-next-2.3.2"
+cd "$HOME/cnkd-next-2.3.2"
 ls Server-All.jar data/ServerConfig.json start.sh
 ```
 
@@ -50,7 +51,8 @@ ls Server-All.jar data/ServerConfig.json start.sh
   "gameplay": {
     "maxPlayer": 100,
     "maxUnit": 1000,
-    "enableAI": false
+    "enableAI": false,
+    "manualStartCountdownSeconds": 5
   },
   "map": {
     "enableModPackageMapDiscovery": true,
@@ -97,16 +99,14 @@ maps 1
 2. 编辑 `data/ServerConfig.json`。
 3. 在包目录运行 `.\start-windows.bat`，观察日志，确认出现 `服务器已启动` 并检查游戏 TCP 端口。
 
-如果旧脚本使用 Java 17 时出现 `failed to open a new selector`，且下层异常来自 `UnixDomainSockets`，可以在同一个 PowerShell 窗口设置一个短、可写的临时目录，再运行自带脚本：
+2.3.2 随附脚本会创建短临时目录，供 Java 17 的网络选择器使用。如果脚本提示目录无法创建，可在同一个 PowerShell 窗口改用有写权限的无空格短路径：
 
 ```powershell
-$udsDir = Join-Path $env:SystemDrive 'tmp\cnkd-hps-uds'
-New-Item -ItemType Directory -Path $udsDir -Force | Out-Null
-$env:JAVA_TOOL_OPTIONS = "$env:JAVA_TOOL_OPTIONS -Djdk.net.unixdomain.tmpdir=$udsDir".Trim()
+$env:CNKD_UDS_TMP = 'C:\tmp\cnkd-uds'
 .\start-windows.bat
 ```
 
-已有 `JAVA_TOOL_OPTIONS` 时请保留其他参数，并使用不含空格的短路径。新构建的脚本若已包含兼容处理，优先使用包内脚本。
+若面板使用自定义 Java 启动命令，且出现 `failed to open a new selector` / `UnixDomainSockets`，请改用包内 BAT，或为面板的 JVM 命令加 `-Djdk.net.unixdomain.tmpdir=<实际可写短路径>`。将 JVM 参数放在 `-jar` 之前。
 
 ## 5. 端口和连接排查
 
@@ -230,7 +230,7 @@ Windows 可直接复制整个 `data` 目录为带日期的备份。
 3. 按字段合并 `ServerConfig.json`、`RoomPermissionConfig.json`、`PersistentAccessConfig.json` 中已有设置，并迁移自定义地图和模组。保留同一实例的持久身份，独立新实例使用各自的数据目录。
 4. 将插件归档、完整批准锁和插件私有配置作为一组迁移。核对宿主 SDK 版本及批准范围，避免旧锁覆盖新包的插件清单。 [插件升级与回退](PLUGIN-DEVELOPMENT-GUIDE-CN.md)
 5. 使用新包的启动脚本。启动后执行 `version`、`config check`、`startmode bootcheck`、`mods` 和 `maps 1`。若版本行只显示 `CNKD NEXT S`，用 JAR SHA-256 确认。
-6. 用房主和普通玩家各进一次大厅，检查自身换位、进入 S 和返回参战，再实测开局、移动、建造和重连。若更新后无法恢复，停服后成组恢复旧 JAR、脚本与对应数据快照。
+6. 用房主和普通玩家各进一次大厅。先检查普通玩家进入 S 和返回参战，再验证房主手动 Start 的 5 秒倒计时与取消操作，以及实际开局、移动、建造和重连。若更新后无法恢复，停服后成组恢复旧 JAR、脚本与对应数据快照。
 
 不建议在线上运行实例中直接覆盖正在使用的 JAR，也不建议把旧 Relay 目录整目录覆盖到纯 Start 包。
 
@@ -240,6 +240,7 @@ Windows 可直接复制整个 `data` 目录为带日期的备份。
 startmode pretest
 startmode bootcheck
 lowlatency status
+gamestart status
 ```
 
 客户端至少完成一次：进入战役室、选择地图、开始游戏、移动单位、建造、地图标点、投降或结束流程。完成后执行：
@@ -288,6 +289,10 @@ lowlatency apply stable
 
 执行 `startmode diagnose`，区分 `auto_start_disabled`、赛后重置、无人宽限、生存图保护和真正的引擎结束。生存图需要核对 `enableSurvivalMapMode`、地图脚本和 AI 槽位，普通地图不要误开生存模式。
 
+### 普通玩家无法切换 S 队
+
+先确认控制台 `version` 显示 1.1.24，房间仍处于可操作的战役室。检查 `lobby.disablePositionChange`、`lobby.disableTeamChange` 和当前房间的 `.teamlock`。退出 S 队还需要空闲参战位。仅开启 `map.enableMapLock` 不应限制玩家换位或进入观战。 [大厅配置](CONFIGURATION-REFERENCE-CN.md#4-lobby)
+
 ### 游戏结束提示与配置不一致
 
 `lobby.enableGameOverBattleRoomReturn=true` 才会进入原版战役室返回链路并显示自动返回提示。保持 `false` 时应使用服务器强制重置提示，不能把两种提示混用。
@@ -298,7 +303,7 @@ V2 插件日志使用 `pluginLogging.consoleLevel` 和 `pluginLogging.fileLevel`
 
 ### EIRS 是否已启用
 
-2.3.1 ZIP 预装 EIRS。用 `plugins identity.reporter` 查看版本与 `ACTIVE`，用 `plugins diagnose identity.reporter` 排查批准锁或加载问题。`ACTIVE` 表示插件已启用，云端注册、上报与封禁同步需另看插件日志和配置。
+2.3.2 ZIP 预装 EIRS。用 `plugins identity.reporter` 查看版本与 `ACTIVE`，用 `plugins diagnose identity.reporter` 排查批准锁或加载问题。`ACTIVE` 表示插件已启用，云端注册、上报与封禁同步需另看插件日志和配置。
 
 EIRS 首次启动可生成 `data/plugins/data/identity.reporter/config.json` 并使用默认服务。只做本地测试或希望禁用外联时，可在该插件私有配置中将 `uploadEnabled`、`autoRegister`、`banSyncEnabled`、`banApplyToEngine` 都设为 `false`，再重启。UPLIST 是独立设置。
 
