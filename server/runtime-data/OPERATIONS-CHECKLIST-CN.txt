@@ -1,0 +1,188 @@
+CNKD NEXT Start Mode 运维检查清单
+============================================================
+
+这份清单面向第一次接手服务器的后台管理员，目标是少猜、少重启、少打扰在线玩家。
+
+一、日常巡检
+------------------------------------------------------------
+
+1. 控制台输入 health
+- 查看 JVM 堆内存、当前房间、线程池队列和基础配置风险。
+- 这是轻量检查，不会扫描大目录，适合高峰期使用。
+
+2. 控制台输入 health detail
+- 在 health 基础上额外扫描 data/replays、data/cache、data/mods、data/maps、data/log。
+- 如果目录很大，建议在低峰期执行，避免磁盘 IO 影响玩家。
+
+3. 控制台输入 uplist status
+- 查看 gs1/gs4 上传与可见性状态。
+- 注意：“上传成功”不等于“玩家列表一定可见”，公开服建议看 status。
+
+4. 控制台输入 startmode diagnose
+- 查看 Start Mode、锁图、自动开局、房间权限与线程状态。
+
+5. 控制台输入 maintenance plan
+- 预览可清理的 cache、旧回放、旧日志。
+- 该命令不会删除任何文件，适合先给值班管理员判断风险。
+
+6. 对接外部面板前阅读 DATA-API-GUIDE-CN.txt
+- 优先使用短缓存 API，不要让面板高频拉取完整 rooms。
+- 人工点击刷新时再使用 refresh=true。
+
+二、玩家体验优先原则
+------------------------------------------------------------
+
+- 高峰期不要频繁重启。
+- 玩家正在大厅卡顿时，先执行 health，看线程队列和内存压力。
+- 玩家正在对局时，避免执行大目录清理、压缩、备份和大量模组替换。
+- 模组服如果大厅同步卡顿，优先减少无关模组和超大地图资源，再提高 Java 内存。
+- 如果出现大规模掉线重连，先观察 health 中线程池 queued 与 backpressureCount，而不是立刻加人数上限。
+
+三、降低运营成本建议
+------------------------------------------------------------
+
+- 长期开启 saveRePlayFile=true 的公开服，应定期归档或清理 data/replays。
+- data/cache 可在停服后清理，通常不建议在线高峰期清理。
+- data/mods 只保留当前实例需要的模组，大型模组建议拆分为独立实例。
+- JavaScript 插件不用时不要放入 data/plugins，可减少 Graal/Wasm 相关依赖和启动内存。
+- 普通公开服建议先使用 start.sh；低配机器或小房间可用 start-lowmem.sh。
+- 外部监控或后台面板建议 3-10 秒轮询一次，不要 1 秒内多次请求完整房间列表。
+
+四、安全清理命令
+------------------------------------------------------------
+
+预览清理计划:
+maintenance plan
+
+清理缓存目录:
+maintenance clean-cache confirm
+
+清理 30 天以前的回放:
+maintenance clean-replays confirm 30
+
+清理 30 天以前的日志:
+maintenance clean-logs confirm 30
+
+说明:
+- 不带 confirm 时不会删除文件。
+- maintenance 不会清理 data/maps、data/mods、data/player、data/saves。
+- 建议先执行 health detail，再根据容量情况选择是否清理。
+
+五、单房间低延迟巡检
+------------------------------------------------------------
+
+日常低噪声检查:
+startmode pretest
+startmode bootcheck
+lowlatency readout
+lowlatency advise
+startmode diagnose
+
+玩家入房提示核对:
+- startmode diagnose 中查看 joinTips.enabled、joinTips.lowLatencyHint、joinTips.lowLatencyProfile。
+- 默认应保持 joinTips.enabled=false、joinTips.lowLatencyHint=false，避免玩家入房轻提示刷屏。
+- 只有显式设置 lobby.enableJoinReadinessTips=true 时，joinTips.lowLatencyHint=true 才表示玩家入房会看到一次低延迟模式轻提示；该提示不会周期广播。
+
+每轮新参数、新地图、新 MOD 或新包实测:
+startmode pretest
+startmode bootcheck
+lowlatency apply test
+lowlatency reset
+正常操作至少 60 秒后执行:
+lowlatency readout
+lowlatency summary
+lowlatency advise
+
+服主最短回传包:
+- 地图、模式、玩家人数、AI 数量、是否 Survival/战役室、是否 MOD。
+- 服务端地区/机器、玩家地区概况、本轮 profile、本轮体感结论、多数玩家评分、是否优于原版。
+- 是否开局自动结束、是否无法控制单位、是否回弹/瞬移/掉指令。
+- startmode pretest、startmode bootcheck、lowlatency readout、lowlatency summary、lowlatency advise 输出。
+- 异常时追加 lowlatency status、startmode diagnose、异常前后约 100 行后台日志。
+
+玩家体感反馈最小模板:
+- 玩家地区/网络。
+- 战役室看到的延迟数字。
+- 操作响应评分 1-5。
+- 是否比原版更跟手。
+- 最明显改善的操作。
+- 最明显的问题。
+- 是否回弹/瞬移、点了没反应/掉指令、数字高但操作顺、数字低但慢半拍。
+
+现象归因:
+- 延迟数字高但操作顺：先看客户端网络或显示样本，不急着改服务端 profile。
+- 延迟数字低但操作慢：看 readout.bottleneck、summary.preTick、summary.hessQueue。
+- 回弹/瞬移：先 lowlatency apply stable，再收集 readout/summary/advise。
+- 点了没反应且出现 failed/bridge failed：回 stable，并保留 lowlatency status。
+- 开局自动结束：先 startmode diagnose，不直接归因到低延迟。
+
+实测后参数决策:
+- recommended 稳定：保持当前档，继续扩大人数或换地图复测。
+- 样本不足或反馈分歧：lowlatency reset，同档再测。
+- 多人回弹、掉指令、degrade/rollback、failed：lowlatency apply stable。
+- stable/recommended 连续 2-3 轮稳定：lowlatency apply production。
+- aggressive 只在 recommended 多轮稳定后短时测试；异常立即回 recommended/stable。
+- lowlatency apply off 只用于人工应急对照，不作为长期实战配置。
+
+首轮异常第一响应:
+- pretest warning：先处理 warning；production 指标模式则 lowlatency apply test。
+- 开局自动结束：startmode diagnose，不直接关闭低延迟。
+- 无法控制单位、回弹、掉指令：lowlatency readout、summary、advise；多人复现或 failed 时 lowlatency apply stable。
+- 数字高但操作顺：先排查玩家网络，不改全局 profile。
+- 数字低但慢半拍：看 preTick、hessQueue、receiveToEngineAvgMicros。
+- 大厅/Connecting 慢：排查 MOD/地图加载，不降低大厅同步心跳。
+- production 无指标：lowlatency apply test，再 lowlatency reset。
+
+稳定后的长期运行:
+lowlatency apply production
+
+说明:
+- production 只关闭指标采样，保留当前低延迟参数。
+- test 会恢复指标采样，适合复测和异常复盘。
+- 如果要重启后也保持低开销生产模式，编辑 data/ServerConfig.json，把 singleRoomLowLatency.metricsEnabled 改为 false。
+- console.showLowLatencySummary 默认 false，建议不要在高峰期长期打开周期汇总。
+- nettyWorkerThreadsOverride 只在启动创建 Netty worker group 时生效，修改后必须重启服务端。
+
+六、内存风险处理
+------------------------------------------------------------
+
+health 显示 WARN:
+- 先减少同时在线人数或降低 maxPlayer。
+- 检查是否导入了过大的模组包。
+- 检查 data/replays 和 data/cache 是否长期未清理。
+
+health 显示 CRITICAL:
+- 不建议继续开新局。
+- 等当前玩家结束后重启实例。
+- 如果频繁出现，给 Java 增加 -Xmx，或拆分模组/玩法实例。
+
+七、公开列表排查
+------------------------------------------------------------
+
+如果后台显示端口开放，但列表看不到:
+- 确认 data/ServerConfig.json 中 autoUpList=true。
+- 确认 data/RelayLicenseConfig.json 中 licenseKey 有 uplist 权限。
+- 执行 uplist status，检查 gs1/gs4 是否可见。
+- 如果启用了推广模式，确认 listPromotionGameStatus 使用 battleroom 时玩家可正常进入。
+
+八、推荐命令组合
+------------------------------------------------------------
+
+轻量健康检查:
+health
+
+完整运维检查:
+health detail
+maintenance plan
+uplist status
+startmode diagnose
+lowlatency advise
+
+配置热重载后检查:
+reloadconfig
+health
+uplist status
+lowlatency advise
+
+============================================================
+建议把这份清单和 CONFIG-HELP-CN.txt 一起交给每位服务器管理员。

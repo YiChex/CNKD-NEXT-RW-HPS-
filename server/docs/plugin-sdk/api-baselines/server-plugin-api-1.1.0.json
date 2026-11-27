@@ -1,0 +1,751 @@
+{
+  "schemaVersion": 1,
+  "apiVersion": "1.1.0",
+  "implementationTitle": "CNKD NEXT Plugin API",
+  "artifactFileName": "server-plugin-api-1.1.0.jar",
+  "artifactSha256": "6905a3d105b50661565c8774d3d84fdf485bb6e6232751e39b9d133283abbf7f",
+  "maxClassMajor": 55,
+  "toolVersion": "1.0.0",
+  "classes": [
+    {
+      "name": "net.rwhps.server.plugin.api.ApiVersions",
+      "kind": "CLASS",
+      "access": 17,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [
+        {
+          "name": "DESCRIPTOR_VERSION",
+          "descriptor": "I",
+          "signature": "",
+          "access": 25,
+          "constantValue": "java.lang.Integer:2"
+        },
+        {
+          "name": "SERVER_API",
+          "descriptor": "Ljava/lang/String;",
+          "signature": "",
+          "access": 25,
+          "constantValue": "java.lang.String:1.1.0"
+        }
+      ],
+      "methods": []
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.CnkdPlugin",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "onDisable",
+          "descriptor": "()V",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": [
+            "java.lang.Exception"
+          ]
+        },
+        {
+          "name": "onEnable",
+          "descriptor": "(Lnet/rwhps/server/plugin/api/PluginContext;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": [
+            "java.lang.Exception"
+          ]
+        },
+        {
+          "name": "onReady",
+          "descriptor": "()V",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": [
+            "java.lang.Exception"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.PlayerSnapshot",
+      "kind": "CLASS",
+      "access": 17,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "<init>",
+          "descriptor": "(Ljava/lang/String;Ljava/lang/String;IIZZZZZ)V",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "adminAuthority",
+          "descriptor": "()Z",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "alive",
+          "descriptor": "()Z",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "connected",
+          "descriptor": "()Z",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "hostAuthority",
+          "descriptor": "()Z",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "id",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "name",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "slot",
+          "descriptor": "()I",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "superAdmin",
+          "descriptor": "()Z",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "team",
+          "descriptor": "()I",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "toString",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.PluginCommands",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "registerConsole",
+          "descriptor": "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/rwhps/server/plugin/api/command/CommandExecutor;)Lnet/rwhps/server/plugin/api/Registration;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "registerPlayer",
+          "descriptor": "(Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Lnet/rwhps/server/plugin/api/command/CommandExecutor;)Lnet/rwhps/server/plugin/api/Registration;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.PluginContext",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "commands",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PluginCommands;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "dataDirectory",
+          "descriptor": "()Ljava/nio/file/Path;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "declaredCapabilities",
+          "descriptor": "()Ljava/util/Set;",
+          "signature": "()Ljava/util/Set<Ljava/lang/String;>;",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "events",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PluginEvents;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "logger",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PluginLogger;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "manage",
+          "descriptor": "(Ljava/lang/AutoCloseable;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "pluginId",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "pluginName",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "pluginVersion",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "scheduler",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PluginScheduler;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "server",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PluginServer;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.PluginEvents",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "subscribe",
+          "descriptor": "(Ljava/lang/Class;Lnet/rwhps/server/plugin/api/event/PluginEventListener;)Lnet/rwhps/server/plugin/api/Registration;",
+          "signature": "<T::Lnet/rwhps/server/plugin/api/event/PluginEvent;>(Ljava/lang/Class<TT;>;Lnet/rwhps/server/plugin/api/event/PluginEventListener<TT;>;)Lnet/rwhps/server/plugin/api/Registration;",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.PluginLogger",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "error",
+          "descriptor": "(Ljava/lang/String;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "error",
+          "descriptor": "(Ljava/lang/String;Ljava/lang/Throwable;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "info",
+          "descriptor": "(Ljava/lang/String;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "warn",
+          "descriptor": "(Ljava/lang/String;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.PluginScheduler",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "schedule",
+          "descriptor": "(Ljava/lang/String;JLjava/lang/Runnable;)Lnet/rwhps/server/plugin/api/Registration;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "scheduleRepeating",
+          "descriptor": "(Ljava/lang/String;JJLjava/lang/Runnable;)Lnet/rwhps/server/plugin/api/Registration;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.PluginServer",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "apiVersion",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "broadcastSystemMessage",
+          "descriptor": "(Ljava/lang/String;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "gameStarted",
+          "descriptor": "()Z",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "players",
+          "descriptor": "()Ljava/util/List;",
+          "signature": "()Ljava/util/List<Lnet/rwhps/server/plugin/api/PlayerSnapshot;>;",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "productName",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "sendSystemMessage",
+          "descriptor": "(Ljava/lang/String;Ljava/lang/String;)Z",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.Registration",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [
+        "java.lang.AutoCloseable"
+      ],
+      "fields": [],
+      "methods": [
+        {
+          "name": "close",
+          "descriptor": "()V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "isActive",
+          "descriptor": "()Z",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.command.CommandExecutor",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "execute",
+          "descriptor": "(Lnet/rwhps/server/plugin/api/command/CommandInvocation;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": [
+            "java.lang.Exception"
+          ]
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.command.CommandInvocation",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "arguments",
+          "descriptor": "()Ljava/util/List;",
+          "signature": "()Ljava/util/List<Ljava/lang/String;>;",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "player",
+          "descriptor": "()Ljava/util/Optional;",
+          "signature": "()Ljava/util/Optional<Lnet/rwhps/server/plugin/api/PlayerSnapshot;>;",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "reply",
+          "descriptor": "(Ljava/lang/String;)V",
+          "signature": "",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.event.GameEndedEvent",
+      "kind": "CLASS",
+      "access": 17,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [
+        "net.rwhps.server.plugin.api.event.PluginEvent"
+      ],
+      "fields": [],
+      "methods": [
+        {
+          "name": "<init>",
+          "descriptor": "(ILjava/lang/String;Ljava/lang/String;Ljava/util/List;Ljava/util/List;)V",
+          "signature": "(ILjava/lang/String;Ljava/lang/String;Ljava/util/List<Ljava/lang/String;>;Ljava/util/List<Ljava/lang/String;>;)V",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "gameTime",
+          "descriptor": "()I",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "mapName",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "players",
+          "descriptor": "()Ljava/util/List;",
+          "signature": "()Ljava/util/List<Ljava/lang/String;>;",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "replayName",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "winners",
+          "descriptor": "()Ljava/util/List;",
+          "signature": "()Ljava/util/List<Ljava/lang/String;>;",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.event.GameStartedEvent",
+      "kind": "CLASS",
+      "access": 17,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [
+        "net.rwhps.server.plugin.api.event.PluginEvent"
+      ],
+      "fields": [],
+      "methods": [
+        {
+          "name": "<init>",
+          "descriptor": "(J)V",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "occurredAtMillis",
+          "descriptor": "()J",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.event.PlayerChatEvent",
+      "kind": "CLASS",
+      "access": 17,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [
+        "net.rwhps.server.plugin.api.event.PluginEvent"
+      ],
+      "fields": [],
+      "methods": [
+        {
+          "name": "<init>",
+          "descriptor": "(Lnet/rwhps/server/plugin/api/PlayerSnapshot;Ljava/lang/String;)V",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "message",
+          "descriptor": "()Ljava/lang/String;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "player",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PlayerSnapshot;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.event.PlayerJoinedEvent",
+      "kind": "CLASS",
+      "access": 17,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [
+        "net.rwhps.server.plugin.api.event.PluginEvent"
+      ],
+      "fields": [],
+      "methods": [
+        {
+          "name": "<init>",
+          "descriptor": "(Lnet/rwhps/server/plugin/api/PlayerSnapshot;)V",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "player",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PlayerSnapshot;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.event.PlayerLeftEvent",
+      "kind": "CLASS",
+      "access": 17,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [
+        "net.rwhps.server.plugin.api.event.PluginEvent"
+      ],
+      "fields": [],
+      "methods": [
+        {
+          "name": "<init>",
+          "descriptor": "(Lnet/rwhps/server/plugin/api/PlayerSnapshot;)V",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        },
+        {
+          "name": "player",
+          "descriptor": "()Lnet/rwhps/server/plugin/api/PlayerSnapshot;",
+          "signature": "",
+          "access": 1,
+          "annotationDefault": false,
+          "exceptions": []
+        }
+      ]
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.event.PluginEvent",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": []
+    },
+    {
+      "name": "net.rwhps.server.plugin.api.event.PluginEventListener",
+      "kind": "INTERFACE",
+      "access": 1537,
+      "signature": "<T::Lnet/rwhps/server/plugin/api/event/PluginEvent;>Ljava/lang/Object;",
+      "superName": "java.lang.Object",
+      "interfaces": [],
+      "fields": [],
+      "methods": [
+        {
+          "name": "onEvent",
+          "descriptor": "(Lnet/rwhps/server/plugin/api/event/PluginEvent;)V",
+          "signature": "(TT;)V",
+          "access": 1025,
+          "annotationDefault": false,
+          "exceptions": [
+            "java.lang.Exception"
+          ]
+        }
+      ]
+    }
+  ]
+}

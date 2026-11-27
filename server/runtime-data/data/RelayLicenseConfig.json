@@ -1,0 +1,14 @@
+{
+  "leaseEndpoint": "https://auth.cnkd.fun/api/license/lease.php",
+  "licenseKey": "",
+  "instanceName": "CNKD NEXT Start 实例",
+  "customerHint": "",
+  "publicIpv4Hint": "",
+  "requestTimeoutSeconds": 8,
+  "refreshSeconds": 1800,
+  "graceHours": 72,
+  "requestedFeatures": [
+    "relay_basic",
+    "uplist"
+  ]
+}

@@ -4,7 +4,7 @@
 
 CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中的配置可理解性、原版大厅链路兼容、模组地图加载、长期运维和低延迟诊断问题。项目适合个人服主、战队活动服、公开列表服、团战服、FFA 混战服、生存地图服和固定地图活动服。
 
-本仓库提供文档和发布包下载。首次安装请选用完整 ZIP，并以实际附件中的配置、启动脚本和 SDK 为准。 [GitHub Releases](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases)
+本仓库包含服务端源码、部署文档和插件目录。首次安装请选用完整 ZIP，并以附件中的配置、启动脚本和 SDK 为准。 [GitHub Releases](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases)
 
 **当前发布版 `2.3.2`** 使用服务端 `1.1.24`，含手动 Start 默认 5 秒倒计时、普通玩家进出 S 队修复及 EIRS。下载 Assets 中的 `CNKD.NEXT.2.3.2.zip` 并解压到独立实例目录。 [下载 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/tag/2.3.2) · [核对版本与 SHA-256](docs/RELEASE-VERSIONS-CN.md)
 
@@ -18,6 +18,8 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 | 修改完整配置、权限和低延迟参数 | [配置参考](docs/CONFIGURATION-REFERENCE-CN.md) |
 | 管理面板、RCON 和监控接入 | [接口运维指南](docs/API-OPERATIONS-CN.md) |
 | 插件开发与兼容规则 | [插件开发指南](docs/PLUGIN-DEVELOPMENT-GUIDE-CN.md) |
+| 服务端源码、API 与构建工具 | [源码构建](server/BUILDING-CN.md) |
+| 最小示例、EIRS、战报与称号 | [插件目录](docs/PLUGINS-CN.md) |
 | 上游来源与许可证 | [RW-HPS](https://github.com/deng-rui/RW-HPS) |
 | 官方帮助 | QQ 群 `910085695` |
 

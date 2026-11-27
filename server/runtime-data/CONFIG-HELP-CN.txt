@@ -1,0 +1,672 @@
+CNKD NEXT Start Mode 公共发布版配置说明
+============================================================
+
+这份文档面向第一次部署本服务端的管理员。
+如果你只是想先跑起来，请优先阅读“首次使用三步”；如果你要开公开服、锁图、自动开局或推广占位，再继续看后面的专项说明。
+
+
+一、首次使用三步
+============================================================
+
+1. 解压完整压缩包
+- 不要只替换 Server-All.jar。
+- 请保留 data 目录、启动脚本和本说明文档。
+
+2. 修改核心配置
+- 打开 data/ServerConfig.json。
+- 至少检查 port、serverName、maxPlayer、地图/房间规则；默认不设密码、不限制手动开局人数、不启用自动开局。
+- 默认 autoUpList=false，不会自动上传公共列表。
+
+3. 如需开放到公共列表
+- 打开 data/RelayLicenseConfig.json。
+- 填写 licenseKey，并确认 data/ServerConfig.json 里的 autoUpList=true。
+- 如果没有授权码，请联系你获取本发布包的发布方或运维人员。
+
+4. 首次启动确认许可协议
+- 全新目录第一次启动时，服务端会显示 RW-HPS 许可协议。
+- 如果你接受协议，请在控制台输入 Yes 并回车。
+- 之后会生成本实例的运行状态文件，后续启动通常不会再次询问。
+
+
+二、配置文件用途
+============================================================
+
+data/ServerConfig.json
+- 主配置文件。
+- 管理端口、服务器名称、公共列表、人数、自动开局、地图锁定、房间规则等。
+
+data/RelayLicenseConfig.json
+- 授权与公共列表功能配置。
+- 只有 autoUpList=true 且授权包含 uplist 功能时，服务端才会尝试开放到公共列表。
+
+data/RoomPermissionConfig.json
+- 房间内权限管理配置。
+- 管理房主、管理员、普通玩家可以使用哪些大厅和对局命令。
+
+data/PersistentAccessConfig.json
+- 持久化黑名单与持久化管理员配置。
+- 被 ban 的 UUID/IP/IP24 会写入这里，重启后不会丢失。
+- 可通过 UUID 指定玩家自动获得房主、管理员或超级管理员权限。
+
+CONFIG-HELP-CN.txt
+- 当前这份说明文档。
+
+
+三、修改 JSON 时的注意事项
+============================================================
+
+- 建议使用 VS Code、Notepad++、Sublime Text 等支持 UTF-8 的编辑器。
+- 文件编码请保持 UTF-8。
+- 字符串必须使用英文双引号，例如 "我的服务器"。
+- true/false 不要加引号。
+- 数字不要加引号，例如 5123、100、-1。
+- 每一项之间用英文逗号分隔，最后一项后面不要多加逗号。
+- 修改前建议备份原文件。
+- 修改后重启服务端，让配置完整生效。
+
+说明：
+- 本服务端配置读取器会忽略行首 # 或 // 注释。
+- 但为了兼容更多外部工具，ServerConfig.json 和 RelayLicenseConfig.json 默认保持标准 JSON 风格，不放注释。
+
+
+四、data/ServerConfig.json 重点说明
+============================================================
+
+[common] 基础启动与公共列表
+------------------------------------------------------------
+
+defStartCommand
+- 默认值：start
+- 作用：服务端启动后自动执行的命令。
+- 建议：纯 Start 部署包保持 start，不要改成 relay。
+
+log
+- 常用值：WARN / INFO / DEBUG
+- 建议：日常使用 WARN；排查问题时临时改为 INFO 或 DEBUG。
+
+errorLogMaxSizeMb
+- 核心错误日志 data/log/Log.txt 的单文件上限，单位 MB。
+- 默认 8，可设置 1 到 64。达到上限后自动轮转，不会无限追加。
+
+errorLogRetainFiles
+- 核心错误日志保留的历史文件数量，对应 Log.txt.1、Log.txt.2 等。
+- 默认 3，可设置 0 到 10。设为 0 时只保留当前 Log.txt。
+- 这两个字段支持通过 reloadconfig 在运行中生效；MCSM 自身的面板终端历史由面板配置管理。
+
+port
+- 作用：游戏服务端口。
+- 建议：固定端口，并在防火墙、安全组、NAT、面板端口映射里保持一致。
+
+serverName
+- 作用：服务器在房间和列表中的显示名称。
+- 建议：简短、清晰、稳定，不要频繁改名。
+
+chatSenderName
+- 默认值：CNKD
+- 作用：服务器系统消息在游戏消息栏中的发送者名称。
+- 建议：可填写中文或英文短词，例如你的服务器简称；过长会被自动截断。
+
+console
+- 作用：后台控制台降噪配置段。
+- verbosity 可选 quiet、normal、verbose、debug。
+- quiet：关闭可分类的普通控制台输出。
+- normal：按下面各分类开关输出。
+- verbose：打开多数运行态分类输出，但普通玩家聊天仍由 showPlayerChat 单独控制。
+- debug：打开所有可分类普通控制台输出。
+- showPlayerJoinLeave 控制玩家进出服事件是否允许显示到后台。
+- showPlayerChat 控制普通玩家聊天是否允许显示到后台。
+- showLowLatencySummary 控制单房间低延迟周期汇总是否允许显示到后台。
+- showSurvivalRepair 控制生存图/战役室修复类普通提示是否允许显示到后台。
+- showRankedCompatibility 控制 Ranked 兼容层普通提示是否允许显示到后台。
+- 注意：WARN/ERROR 级别异常不会被这些开关吞掉；当前降噪实现保留关键告警。
+- 注意：console.verbosity 只管理 StartMode 分类控制台提示，不改变 pluginLogging 的阈值。
+
+pluginLogging
+- 作用：V2 插件的独立日志配置，不受 common.log=WARN 的普通过滤影响。
+- V2 context.logger() 的 INFO WARN ERROR 使用独立输出链路，默认写入控制台和 data/log/plugins 目录，不受 common.log=WARN 的普通过滤影响。
+- consoleLevel 和 fileLevel 可选 OFF、ERROR、WARN、INFO，默认均为 INFO。
+- INFO：显示或保存插件启动、状态等普通日志；WARN：仅保留警告和错误；ERROR：仅保留错误；OFF：关闭普通插件日志。
+- infoLinesPerMinutePerPlugin：单个插件每分钟 INFO 上限，默认 120；WARN/ERROR 不受该上限限制。
+- maxMessageLength：单条插件日志最大长度，默认 2048。
+- maxFileSizeMb 和 retainDays：独立插件日志文件的轮转大小和保留时间，默认 8 MB、7 天。
+- 注意：本配置只对 V2 context.logger() 生效。Legacy V1 直接调用 Log.info/debug/track 仍由 common.log 控制。
+- common.log=OFF 会关闭普通 V2 插件日志；带 Throwable 的 error 仍保留错误输出。
+- 控制台输入 pluginlog status 可查看 V2 插件日志配置 限流 截断 队列与文件写入诊断。
+- 修改后需要重启服务端生效。
+
+subtitle
+- 作用：副标题/列表辅助文本。
+- 建议：公开服通常留空，避免覆盖地图名或影响列表展示。
+
+autoUpList
+- 默认值：false
+- true：启动后自动尝试开放到公共列表。
+- false：只本地开放，不自动上传公共列表。
+- 注意：启用公共列表还需要 RelayLicenseConfig.json 中的 licenseKey 有效。
+- 多入口列表维护使用保守刷新节奏：普通单房间为 50 秒，Relay 托管房最低为 45 秒；旧配置写入更小值时会自动按最低值运行。
+- master server 快照不可用、格式未知或解析不完整时只记录 unknown，不会自动删除并重建列表条目。
+
+listStatusSuffixEnabled
+- 默认值：true
+- 作用：控制服务器名后面的状态后缀。
+- true：显示“空闲 / 正常 / 繁忙 / 游戏中”等后缀。
+- false：不附加状态后缀，服务器名更稳定。
+
+listPinnedCharacterCount
+- 默认值：20
+- 作用：在列表地图字段前添加置顶控制字符。
+- 0：关闭置顶字符。
+- 建议：默认使用 20；如你明确知道列表排序机制，再谨慎调整。
+
+listNamePinnedCharacterCount
+- 默认值：0
+- 作用：在列表服务器名字段前添加置顶控制字符。
+- 0：关闭置顶字符。
+- 建议：公开服仅在明确需要列表排序实验时启用，避免影响玩家可读性。
+
+listExperimentEnabled
+- 默认值：false
+- 作用：公共列表字段实验模式，可覆盖 game_name、created_by、game_map、game_status、player_count、max_player_count。
+- 建议：普通管理员不要开启；它更适合排查列表排序或显示问题。
+
+listPromotionModeEnabled
+- 默认值：false
+- 作用：推广模式。固定上传到列表的 game_status、player_count、max_player_count，降低真实人数变化对列表占位的影响。
+- 说明：推广模式只影响上传到公共列表的展示字段，不会改变真实房间人数，也不会自动锁死玩家进入。
+- 建议：需要稳定推广位时再开启。
+
+listPromotionGameStatus
+- 默认值：chat
+- 可选值：chat / battleroom
+- chat：列表看起来更像聊天/宣传位，但真实房间仍按服务端运行。
+- battleroom：更接近普通可加入房间。
+- 建议：如果你的客户端显示 chat 后无法正常进入，请改为 battleroom。
+
+listPromotionPlayerCount
+- 默认值：-1
+- 作用：推广模式下固定显示的当前人数。
+- -1：自动使用安全默认值。
+- 注意：服务端会保护 player_count 小于 max_player_count，避免列表显示满员。
+
+listPromotionMaxPlayerCount
+- 默认值：-1
+- 作用：推广模式下固定显示的人数上限。
+- -1：自动使用真实上限或安全默认值。
+
+listPromotionSortBoostEnabled
+- 默认值：false
+- 作用：启用安全置顶增强。
+- 开启后只调整上传到公共列表的展示/排序字段，不会制造缺失单位、伪模组依赖或同步不匹配。
+- 默认行为：如果没有手动填写 listExperimentGameName，则上传 game_name=Unnamed；如果没有手动填写 listExperimentCreatedBy，则用 listPromotionSortBoostPrefix + 当前服务器名。
+
+listPromotionSortBoostPrefix
+- 默认值：𒀱
+- 作用：安全置顶增强使用的标题前缀。
+- 说明：这是从当前列表推广位观察到的高位字符前缀，可能影响部分客户端排序。
+- 建议：可以保留默认，也可以改成你自己的符号；不要使用大量不可见控制字符堆叠。
+
+listPromotionBlankMapEnabled
+- 默认值：false
+- 作用：安全置顶增强时是否把上传到列表的 game_map 置为空。
+- true：更接近部分推广位的字段形态。
+- false：保留真实地图/锁图显示，更适合可游玩公开服。
+- 说明：这只影响列表显示字段，不会改变真实房间地图。
+
+
+[network] 网络与接口
+------------------------------------------------------------
+
+mixProtocolEnable
+- 建议：纯 Start 服保持 false。
+
+rconPort / rconPasswd
+- RCON 管理接口配置。
+- 不使用 RCON 时，rconPort 保持 0。
+- 如果启用 RCON，请务必修改 rconPasswd 为强密码。
+
+webPort / webToken / webHOST
+- Web 接口配置。
+- 纯 Start 部署包默认 webPort=0，表示关闭内置 Web 服务。
+- 如果启用 Web，请修改 webToken，并限制访问来源。
+
+sslEnable / sslMixEnable / sslPasswd
+- SSL 相关配置。
+- 普通 Start 服通常保持 false。
+
+
+[gameplay] 对局与玩家规则
+------------------------------------------------------------
+
+serverID
+- 作用：服务器内部标识。
+- 建议：部署后保持稳定，不要频繁修改。
+
+enterAd / startAd
+- 玩家进入或游戏开始时显示的提示文本。
+- 可留空。
+
+passwd
+- 服务器密码。
+- 默认留空；公开服建议保持留空，私服可填写。
+
+maxPlayer
+- 最大玩家数。
+- 当前单房间模板默认 100。
+- 建议根据地图和机器性能设置。
+- 生存模式下系统 AI 也会占用一个位置。
+
+oneAdmin
+- true：首位真人玩家自动获得房主管理权，房主离开时可按房间权限配置自动转移。
+- false：关闭普通玩家房主权限。客户端不显示房主操作，服务端也会拒绝普通 isAdmin/autoAdmin 标记通过手动命令继续使用房主权限。
+- 后台通过控制台或持久权限配置设置的 superAdmin 不受此开关限制，但仍按 RoomPermissionConfig 的具体动作权限执行；moderation.superAdminBypass=true 时可绕过具体动作限制。
+
+startMinPlayerSize
+- 手动开始游戏的最低人数。
+- -1：关闭限制。
+- 发布版默认 -1。
+
+autoStartMinPlayerSize
+- 自动开局所需人数。
+- -1：关闭自动开局。
+- 发布版默认 -1，不自动开局。
+- 建议：公开服按玩法设置，例如 2、4、6、8。
+
+autoStartCountdownSeconds
+- 自动开局倒计时秒数。
+- 建议：5 到 15 秒。
+- 0：达到人数后立即开局。
+
+maxGameIngTime
+- 单局最长时间，单位秒。
+- -1：不限时。
+
+maxOnlyAIGameIngTime
+- 只剩 AI 时的最长持续时间，单位秒。
+- -1：不限时。
+
+enableAI
+- 是否允许玩家手动添加 AI。
+- 生存模式的系统 AI 不完全依赖这个开关。
+
+maxUnit
+- 最大单位数。
+- 当前单房间模板默认 1000。
+- 机器性能较弱时可适当降低。
+
+defIncome
+- 默认收入倍率。
+- 1.0 表示原版常规值。
+
+defaultStartingCreditsAmount
+- 默认开局资金。
+- 常用值：0 / 1000 / 2000 / 4000 / 5000 / 10000。
+- 如果房主或玩家在大厅内修改了资金，本版本会尊重当前大厅设置，不会在开局时强制改回这里的默认值。
+- 只有使用非常规资金数值时，服务端才会在地图引擎就绪后做一次精确同步；常规档位会直接交给游戏原生大厅设置处理，兼容模组图更稳。
+
+disableNukes
+- true：默认禁用核弹。
+- false：允许核弹。
+- 此字段只作为新战役室的默认值，不再强制覆盖当前房间状态。
+- 开局优先级：房主在原版战役室明确选择 > 引擎当前战役室值 > 此配置默认值。
+- 房主离开或转移后，旧房主选择自动失效，不会覆盖新房主或引擎当前值。
+- 执行 reloadconfig 时会保留当前房间的禁核状态；修改后的默认值从下一次新战役室或赛后重置开始使用。
+
+defaultFogMode
+- 可选值：off / basic / lineOfSight
+- off：无迷雾。
+- basic：普通迷雾。
+- lineOfSight：视野迷雾。
+- 发布版默认 lineOfSight，即重雾。
+
+isAfk
+- 是否启用 AFK 管理权转移。
+
+muteAll
+- 是否全体禁言。
+
+saveRePlayFile
+- 是否保存回放。
+
+
+[lobby] 大厅规则
+------------------------------------------------------------
+
+disableTeamChange
+- true：禁止玩家在大厅手动改队。
+- 发布版默认 false，允许玩家自由调队和切换观战。
+
+disablePositionChange
+- true：禁止玩家在大厅手动换位。
+
+enableFreeForAllMode
+- true：启用 FFA 混战模式，每个玩家分到不同队伍。
+- 与生存模式冲突时，生存模式优先。
+
+enableAlternateTeamsOnJoin
+- true：启用标准团战配队。
+- 当前逻辑通常按奇偶位分队。
+- 发布版默认 false，不强制 AB 队。
+- 与 FFA、生存模式冲突时会被忽略。
+
+enableSurvivalMapMode
+- true：启用生存图模式。
+- 2 号位保留给 B 队系统 AI，其余真人玩家固定为 A 队。
+- 系统 AI 会占用一个人数名额。
+
+survivalGameOverGraceSeconds
+- 默认值：180。
+- 作用：生存图开局后这段时间内不接受通用“只剩一个队伍存活”的结束判定，避免地图脚本/生存倒计时还没刷出敌人时被误判全局结束。
+- 建议：多数生存图保持默认即可；如果地图开局准备时间特别长，可以适当提高。
+
+survivalEnemyClearConfirmSeconds
+- 默认值：45。
+- 作用：生存局中真人队伍疑似胜利时，要求敌方单位清空状态保持一段时间后再接受结算，避免波次间隔导致提前结束。
+- 建议：波次间隔较长的生存图可提高到 60-120；普通对战或非生存图不受影响。
+
+enableLobbySyncOptimization
+- 默认值：true
+- 作用：减少战役室内重复的队伍/房间信息刷新，降低大型模组大厅卡顿。
+- 建议：模组服保持 true；只有排查兼容问题时再临时改为 false。
+
+lobbyRefreshHeartbeatMillis / lobbyPacketHeartbeatMillis
+- 作用：大厅状态刷新和房间信息包的保底心跳间隔，单位毫秒。
+- 默认值：30000。
+- 建议：模组服保持默认；该链路属于较重的大厅/队伍/同步刷新，不建议低于 30000。延迟显示刷新请使用下面的 latencyHeartbeatMillis。
+latencyHeartbeatMillis
+- 默认值：1000。
+- 作用：独立轻量延迟心跳，约每 1 秒向玩家发送一次 HEART_BEAT，并只放行轻量 TEAM_LIST 用于刷新延迟显示，不触发 SERVER_INFO / SYNC 重刷。
+- 说明：玩家心跳响应只更新服务端采样状态，不直接触发 TEAM_LIST 全量序列化；TEAM_LIST 由独立定时器按 latencyHeartbeatMillis 刷新，避免多人同时回包导致游戏主线程刷新风暴。
+- 兼容：如果旧配置仍保留 10000，运行时会自动按新版默认 1000ms 处理，直接替换 JAR 也能生效。
+- 建议：公开服保持默认即可；该链路只刷新延迟感知，不要通过降低大厅同步心跳来追求延迟显示刷新。高在线或重模组房间如果仍出现高延迟，优先检查 teamListRefreshes、teamListRefreshesFailed、Hess 队列和 Netty worker，而不是继续提高心跳频率。
+
+enableLobbyGameSyncPacketFilter
+- 默认值：true
+- 作用：只在未开局的战役室里过滤重复的游戏同步/校验包，缓解右侧频繁出现“同步”提示导致的卡顿。
+- 说明：进入游戏后不会过滤实战同步包。
+- 建议：大型模组服保持 true；如果某个模组大厅无法完成同步，可临时改为 false 对比测试。
+
+  lobbyGameSyncPacketHeartbeatMillis
+  - 默认值：3000。
+  - 作用：即使同步/校验包内容没有变化，也会按这个间隔放行一次，避免客户端认为大厅状态完全停住。
+
+  lobbyGameSyncPacketJoinGraceMillis
+  - 默认值：180000。
+  - 作用：玩家刚进入房间后的同步/校验保护窗口，单位毫秒；窗口内不拦截游戏同步/校验包。
+  - 建议：大型模组服保持默认或适当提高，避免 400MB 以上模组在直连时长时间停在 Connecting。
+  
+  reconnectGraceMillis
+- 默认值：5000。
+- 作用：短线重连保护窗口，减少移动网络玩家掉线重连时触发完整离开/进入广播。
+- 说明：对局中会自动给玩家更长一点的保护时间，降低重连导致的服务器卡顿。
+
+enableGameOverBattleRoomReturn
+- 默认值：false；字段缺失也按 false 处理。
+- true：游戏结束后显示“自动返回战役室”，调用原版战役室返回链路并保留在线玩家。
+- false：游戏结束后显示“服务器强制重置”，不调用战役室返回链路；重置后玩家需要重新进入。
+- 说明：只有显式填写 true 才会开启自动返回，避免旧配置缺字段时误弹自动返回提示。
+
+gameOverReturnCountdownSeconds
+- 默认值：30。
+- 作用：自动返回战役室或服务器强制重置前共用的赛后等待秒数，范围 5-300。
+- 建议：保持 30 秒，让玩家看完结算并确认接下来是自动返回还是重新进房。
+
+pruneDisconnectedPlayersOnGameOver
+- 默认值：true。
+- 作用：返回战役室前自动清理已经掉线但仍占用对局位置的玩家，避免下一局出现幽灵占位。
+- 建议：公开服保持 true。
+
+enableJoinReadinessTips
+- 默认 false：玩家进房后不显示地图、模组、自动开局等轻提示。
+- true：玩家进房后显示地图、模组、自动开局等简短提示。
+- 如果单房间低延迟模式已开启，也会在同一次入房提示中追加一条低延迟模式提示。
+- 该提示不会周期广播；如需完全关闭玩家入房摘要，保持 false 即可。
+- 模组服如希望玩家自行判断是否需要安装相同模组，可手动改为 true。
+
+enableAutoKickPlayerWhenAllUnitsDestroyed
+- 默认值：false。
+- true：当原版游戏核心已确认真人玩家失去全部单位时，服务端会在连续确认约 3 秒后将该玩家移出当前对局。
+- false：保持原版行为，玩家被击败后仍停留在当前连接中直到自行退出或对局结束。
+- 保护：AI、观战者、已断线玩家不会触发；不会按移动单位数量判断，也不会在对局中删除原版引擎玩家槽位。
+- 建议：普通服保持 false；仅在需要及时释放已被击败玩家连接的玩法中开启。
+
+autoKickPlayerWhenAllUnitsDestroyedMessage
+- 默认值：你已失去全部单位 已被服务器移出本局。
+- 作用：启用自动移除后，作为客户端原生踢出提示框显示的文本。
+- 可填写中文或英文；空白或控制字符会自动恢复为默认文本，最长 256 个字符。
+
+
+[map] 地图控制
+------------------------------------------------------------
+
+enableMapLock
+- true：启用锁图。
+- false：允许房主或管理员正常换图。
+
+lockMap
+- 锁定地图名称。
+- 填写 maps 目录中地图文件名去掉 .tmx 后的名字。
+- 示例：data/maps/我的地图.tmx 对应 lockMap="我的地图"。
+
+enableModPackageMapDiscovery
+- 默认值：true
+- 作用：扫描 data/mods 下 .rwmod/.zip 包中的 [maps] sourceFolder，把模组包自带 .tmx 地图加入 .maps 可选列表。
+- 建议：模组服保持 true；如果你的模组包非常多且启动很慢，可以临时关闭或调低扫描范围。
+
+modPackageMapScanMaxArchiveSizeMb
+- 默认值：512。
+- 作用：单个模组包超过该体积时跳过地图发现，避免启动阶段长时间扫描超大压缩包。
+- 0：不限制体积。
+
+enableModPackageMapAutoExtraction
+- 默认值：true
+- 作用：服务端启动扫描模组包后，立即把发现的模组地图准备到 data/maps/cnkd_mod_maps/ 运行目录，避免房主第一次切换模组地图时才临时解压。
+- 适用场景：希望玩家在游戏内可视化选图 UI 中选择自己已安装模组自带地图，并让服务端自动识别 MOD|...//maps/... 这类地图路径。
+- 注意：客户端 UI 是否能看到某张模组地图，仍取决于玩家本地是否安装了同一模组；服务端负责识别、准备和加载该地图，不能凭空把客户端没有的模组地图加入客户端 UI。
+- 性能建议：400MB 以上大型模组建议保持 true，但如果启动时间过长，可以先调高/调低 modPackageMapScanMaxArchiveSizeMb，或临时改为 false 进行对比测试。
+enableModPackageMapSupportExtraction
+- 默认值：true
+- 作用：当选择模组包内地图时，自动释放同目录的 _map.png、.tsx、.ini、图片、音频等支撑文件到运行地图目录。
+- 建议：保持 true；否则部分模组地图可能能被看到，但加载时缺贴图或地形资源。
+
+enableModPackageMapRuntimeGc
+- 默认值：true
+- 作用：自动识别并回收已经删除或替换模组后留下的服务端运行地图缓存。
+- 安全范围：只处理 data/maps/cnkd_mod_maps/ 下由服务端识别的运行目录，不处理普通 maps 文件和未知目录。
+- 注意：当前房间正在使用的地图不会被回收。
+
+modPackageMapRuntimeGcGraceHours
+- 默认值：24。
+- 作用：孤儿运行目录进入回收前的保护时间，单位为小时。
+- 建议：线上保持 24 或更高；确认模组稳定后可设置为 0。
+
+modPackageMapRuntimeGcMaxDeletePerRun
+- 默认值：20。
+- 作用：单次扫描最多回收的运行目录数量，避免一次操作产生磁盘和日志峰值。
+- 建议：普通单房间服保持 20。
+
+
+五、data/RelayLicenseConfig.json 说明
+============================================================
+
+leaseEndpoint
+- 授权租约接口地址。
+- 一般不需要修改，除非发布方提供了新的授权服务地址。
+
+licenseKey
+- 授权码。
+- 公开服要自动开放到公共列表时必须填写。
+
+instanceName
+- 当前实例名称。
+- 建议填写能区分用途的名称，例如 “北京团战 5123” 或 “生存图公开服”。
+
+customerHint
+- 管理员自定义备注。
+- 可留空。
+
+publicIpv4Hint
+- 公网 IPv4 提示。
+- 有固定公网 IP 时可以填写，动态 IP 可留空。
+
+requestTimeoutSeconds
+- 授权请求超时时间，单位秒。
+- 默认 8 通常足够。
+
+refreshSeconds
+- 授权续租周期，单位秒。
+- 默认 1800，即 30 分钟。
+
+graceHours
+- 授权宽限期，单位小时。
+- 授权站或网络临时异常时用于容错。
+
+requestedFeatures
+- 申请的功能列表。
+- 纯 Start 公开服常用：
+  relay_basic
+  uplist
+
+
+六、data/RoomPermissionConfig.json 说明
+============================================================
+
+enable
+- true：启用房间权限管理。
+- false：关闭这套权限限制。
+
+moderation.superAdminBypass
+- true：superAdmin 可以绕过房间权限限制。
+
+moderation.allowAutoAdminAssignment
+- true：允许首位玩家自动获得房主管理权。
+- 仅在 ServerConfig.json 的 gameplay.oneAdmin=true 时生效。
+
+moderation.allowAutoAdminTransferOnLeave
+- true：房主离开时自动转移管理权。
+- 仅在 ServerConfig.json 的 gameplay.oneAdmin=true 时生效。
+
+host
+- 房主权限。
+- 可控制开始游戏、换图、踢人、加 AI、转移房主、设置资金、设置迷雾、暂停、生成单位等能力。
+
+admin
+- 手动授予的房间管理员权限。
+- 默认与房主接近，你可以按需收紧。
+- 如果不希望管理员在房间内转交房主，可以将 admin.allowTransferHost 改为 false。
+- 旧配置文件缺少 allowTransferHost 时，房主/管理员按 true 兼容处理；普通玩家仍默认 false。
+
+player
+- 普通玩家权限。
+- 可控制 .vote、.afk、.status、.myid、.maps 等能力。
+- 如果你希望“房间权限完全交给玩家”，可以把 player.allowStartGame、player.allowSetCredits、player.allowSetIncome、player.allowSetFog、player.allowSetStartingUnits、player.allowToggleNukes、player.allowToggleSharedControl 等字段改为 true。
+- 普通玩家的开局设置权限默认关闭，避免公开服被路人恶意改规则；房主和管理员默认可以修改。
+
+建议：
+- 公开服如果经常被恶意换图，可以将 admin.allowChangeMap 或 host.allowChangeMap 改为 false。
+- 如果不希望普通玩家接管管理员，可以将 player.allowAfkTakeAdmin 改为 false。
+- 如果不希望房主把房主权限转交给其他玩家，可以将 host.allowTransferHost 改为 false。
+- 如果希望普通玩家不能查看地图列表，可以将 player.allowViewMaps 改为 false。
+- 模组服建议优先让房主/玩家在大厅修改开局设置，不要依赖服务端在开局瞬间强制同步，这样可以减少 map_engine_not_ready 和大厅同步卡顿。
+
+单房间低延迟模式 singleRoomLowLatency
+- enabled=true 时启用单房间命令快路径；该模式只面向独立单房间服务端，不建议用于排位核心/分片环境。
+- fastGameCommand=true 时，游戏内操作包会跳过服务端 decode 与玩家操作事件检查，直接进入 Headless netEngine 队列，降低双向同步前半段延迟。
+- preTickGameCommandDrain=true 时，Hess 每帧入口会先在主线程处理 aN 队首连续的游戏操作包，再生成本帧出站 TICK，减少“本帧组包前未赶上、下一帧才同步”的等待；这是当前主推的低延迟核心。
+- preTickGameCommandDrainRequiresStartedRoom=true 时，前置处理只在房间已开局后启用，避免大厅阶段改变原始包处理时序。
+- preTickGameCommandDrainLimit 控制单帧最多前置处理多少个操作包，默认 256，防止异常积压拖长单帧。
+- inlineGameCommandProcessing=true 时，游戏内操作包会尝试绕过 Hess aN 下一帧队列等待，直接调用 Hess 处理器；这是实验开关，可能引入网络线程处理游戏命令的线程安全风险，默认建议 false，只有压测时短期开启。
+- inlineGameCommandRequiresStartedRoom=true 时，上述直接处理只在房间已开局后启用，避免大厅阶段误处理。
+- skipPlayerOperationEvents、skipPingActionIntercept、disableTurnStoneIntoGoldOnFastPath 为快路径风险开关；保持 true 时延迟最低，但会牺牲服务端对部分操作事件、地图 ping 回调和 turnStoneIntoGold 的拦截能力。
+- serverInjectedCommandLeadTicks 控制服务端注入命令提前多少 tick，原版/保守默认 10；当前单房间低延迟模板使用 8。
+- hessOutboundCommandLeadTicks 控制 Hess 出站 TICK 使用的命令提前量，原版默认 10；单房间低延迟模板使用 8，这是当前更稳妥的主要降延迟旋钮。数值越低体感越快但越接近同步边界。
+- headlessFpsOverride 控制单房间低延迟模式下的 Headless 主循环 FPS 覆盖值，0 表示沿用原始 60；当前发布包默认使用 120，减少服务端帧等待，但会增加 CPU 压力。出现帧抖动、回弹或掉指令时优先切换 stable 档或改回 60。
+- nettyWorkerThreadsOverride 控制单房间低延迟模式下游戏 TCP Netty worker 线程数，0 表示沿用原逻辑；单房间模板使用 1，减少跨线程调度抖动，如大量玩家同时连接导致 IO 压力可改为 2 对照。注意：该项只在服务端启动并创建 Netty worker group 时生效，运行期 lowlatency apply 不能重建 worker group，修改后需重启服务端。
+- directEventLoopWrites=true 时，如果发送调用已经处在同一个 Netty eventLoop 内，会直接 writeAndFlush，避免再排入一次 eventLoop 任务队列；跨线程发送仍保持原来的排队写入。
+- metricsEnabled=true 时继续采样聚合指标；是否每 summaryIntervalSeconds 秒输出到后台由 console.showLowLatencySummary 控制，默认不刷周期汇总。实测稳定后可用 lowlatency apply production 仅关闭指标采样以降低热路径开销；需要再次实测时用 lowlatency apply test 恢复指标。若要持久化生产模式，可把 singleRoomLowLatency.metricsEnabled 改为 false 后重启服务端；复测前再改回 true。
+- 控制台可用 lowlatency summary 查看单局实测摘要；它会输出 profile、result、next、experience.state、experience.bottleneck、experience.action、fastPct、preTick drainPct、Hess 队列、桥接失败、receiveToEngineAvgMicros 与 receiveToEngineP50/P95/MaxMicros，适合每轮测试后第一眼判断。P50/P95/Max 使用最近最多 4096 条“收到 GAMECOMMAND 到入 Hess 队列”的服务端窗口，不能替代玩家网络 RTT。
+- 控制台可用 lowlatency readout 查看首轮实测判读入口；重点看 readout.serverResult、readout.clientLatency、readout.bottleneck、readout.decision、readout.command。serverResult=ok 但 clientLatency=high/jitter/stale 时优先排查玩家网络；serverResult=degrade/rollback 时按 command 回到 recommended/stable。
+- 控制台可用 lowlatency experience 单独查看体感摘要；重点看 experience.state=stable/observe/degrade/rollback、experience.bottleneck=client_network/server_frame_wait/hess_queue/map_load/unknown、experience.action=keep/apply stable/apply recommended/apply rollback/collect status；apply off 仅用于人工排障对照，不作为实战优先动作。
+- 控制台可用 lowlatency status 查看 currentProfile/currentProfileFps/currentProfileNettyWorkers/currentProfileNettyWorkersStartupOnly/currentProfileWarning、degrade.level/degrade.command、Hess Q/R/X、aN 队列深度、前置 drain 命中次数、未开局跳过次数、队首非操作包阻塞次数和桥接异常次数，用于判断低延迟路径是否真正生效。
+- 控制台可用 lowlatency advise 单独查看降级建议；该命令只输出建议，不会自动改参。degrade.command=keep current profile 表示继续当前档；实战中优先按建议切到 stable/recommended，尽量保留低延迟 fast path；lowlatency apply off 仅作为手动应急对照。
+- 控制台可用 lowlatency reset 清空当前诊断计数，适合每轮实测开始前执行；可用 lowlatency profiles 查看 stable/recommended/aggressive/lowMemory 体验档位、A/B/C/D 参数档位，以及 production/test 指标模式说明。
+- 控制台可用 lowlatency apply stable 切换稳健档，适合大图、重 MOD、低配机器或故障隔离；lowlatency apply B.recommended / recommended 临时切换到推荐档；lowlatency apply C.aggressive / aggressive 切换激进实测档；lowlatency apply lowMemory 使用稳健参数并关闭指标采样；lowlatency apply production 保持当前低延迟参数但关闭指标；lowlatency apply test 保持当前低延迟参数并打开指标；lowlatency apply config 回到 ServerConfig.json。lowlatency apply off 仅用于人工应急对照，用来确认异常是否来自低延迟路径；实战中优先保留 stable 或 recommended。apply 只影响当前进程，不会写回配置文件。
+- 控制台可用 startmode pretest 查看首轮实测前检查清单；它会集中显示纯 Start 模式、Headless 就绪、低延迟档位、test/production 指标模式、玩家入房低延迟提示是否会显示，以及推荐实测顺序。别名：startmode checklist、startmode firsttest。
+- 控制台可用 startmode bootcheck 查看首启配置体检摘要；它会显示端口、服名、人数/单位上限、地图锁、低延迟档位、production/test 指标模式、Netty worker 启动期提示和开局/重连聚合状态。
+- 控制台可用 startmode diagnose 查看开局、重连和结束流程状态；重点看 autostart.blockedReason、gameOver.lastSettleReason、flow.noOnlineHumanGraceActive、flow.lastNoOnlineHumanReason、reconnect.state、reconnect.lastEvent，用于区分保护机制等待和真实异常。
+
+
+七、常用配置模板
+============================================================
+
+普通公开团战服
+- autoUpList=true
+- maxPlayer=100
+- autoStartMinPlayerSize=4 或 6
+- autoStartCountdownSeconds=5 到 15
+- enableAlternateTeamsOnJoin=true
+- enableFreeForAllMode=false
+- enableSurvivalMapMode=false
+
+FFA 混战服
+- enableFreeForAllMode=true
+- enableAlternateTeamsOnJoin=false
+- enableSurvivalMapMode=false
+- disableTeamChange=true
+
+生存图服
+- enableSurvivalMapMode=true
+- enableFreeForAllMode=false
+- enableAlternateTeamsOnJoin=false
+- maxPlayer 至少为 2
+- lockMap 填写生存地图名
+
+锁图活动服
+- enableMapLock=true
+- lockMap=你的地图名
+- disableTeamChange=true 或按玩法决定
+- disablePositionChange=true 或按玩法决定
+
+公共列表推广模式
+- autoUpList=true
+- listPromotionModeEnabled=true
+- listPromotionGameStatus=battleroom
+- listPromotionPlayerCount=6360
+- listPromotionMaxPlayerCount=64921
+- listPromotionSortBoostEnabled=true
+- listPromotionSortBoostPrefix=𒀱
+- listPromotionBlankMapEnabled=true 或 false
+- listExperimentGameName=Unnamed
+- listExperimentCreatedBy=𒀱你的推广标题
+- 如果你希望真实可游玩，建议使用 battleroom，不要使用缺失单位或伪模组依赖制造 Server sync mismatch。
+
+持久化管理员/黑名单
+- 让固定管理员进房自动成为房主：打开 data/PersistentAccessConfig.json，在 admins 中新增 {"uuid":"玩家UUID","name":"管理员昵称","role":"host","superAdmin":true}。
+- 只想给后台管理权限但不自动成为房主：role 填 admin 或 super_admin。
+- 玩家 UUID 可让玩家进房后输入 .myid 或 myid 获取，name 只是备注，真正匹配只看 UUID。
+- 运行中通过 ban、clearbanall、admin add/remove 或后台 API 产生的变化，默认会立即写回 PersistentAccessConfig.json。
+- legacySettingsMigrationDone 是旧 Settings.bin 访问数据的一次性迁移标记，首次升级会自动处理；普通管理员不需要手动修改。
+
+
+八、常见问题
+============================================================
+
+启动时报 JSONSyntaxException
+- 通常是 JSON 逗号、引号、布尔值或数字格式写错。
+- 看报错里的 line 和 column，定位到对应行修复。
+- 如果不确定，先恢复备份配置再逐项修改。
+
+后台显示端口开放，但公共列表没有看到
+- 确认 autoUpList=true。
+- 确认 licenseKey 有效且授权包含 uplist。
+- 等待列表服务器刷新。
+- 如果启用了实验/推广字段，先关闭它们测试基础上传是否正常。
+
+房主看到的地图不是锁定地图
+- 确认 enableMapLock=true。
+- 确认 lockMap 与 data/maps 中地图名一致。
+- 修改后重启服务端，不建议只热重载。
+
+中文显示乱码
+- 确认用 UTF-8 编辑器修改配置。
+- Linux 启动请使用包内 start.sh，它已设置 UTF-8 启动参数。
+- 面板解压异常时，请换用支持 UTF-8 文件名的解压方式或重新上传完整 zip。

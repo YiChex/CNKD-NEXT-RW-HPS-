@@ -1,0 +1,19 @@
+{
+  "$schema": "../../../../plugin-v2.schema.json",
+  "apiVersion": 2,
+  "name": "CNKD Welcome",
+  "internalName": "example.welcome",
+  "author": "Example Developer",
+  "main": "example.cnkd.WelcomePlugin",
+  "description": "Minimal CNKD NEXT V2 plugin",
+  "version": "1.0.0",
+  "supportedVersions": ">= 1.3.0",
+  "capabilities": [
+    "player-commands",
+    "player-events",
+    "game-events",
+    "broadcast",
+    "scheduler",
+    "read-state"
+  ]
+}

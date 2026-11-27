@@ -1,0 +1,11 @@
+{
+  "apiVersion": 2,
+  "name": "CNKD Gate C Scheduler Probe",
+  "internalName": "gatec.scheduler-probe",
+  "author": "CNKD Gate C",
+  "main": "net.cnkd.gatec.SchedulerProbePlugin",
+  "description": "Gate C scheduler fixture",
+  "version": "1.0.0",
+  "supportedVersions": ">= 1.1.0",
+  "capabilities": ["scheduler"]
+}

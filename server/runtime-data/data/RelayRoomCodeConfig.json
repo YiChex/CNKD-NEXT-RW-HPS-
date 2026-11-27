@@ -1,0 +1,20 @@
+{
+  "enable": true,
+  "localNodeCode": "A",
+  "suffixDigits": 3,
+  "primarySchemeId": "RK",
+  "schemes": [
+    {
+      "id": "RK",
+      "prefix": "RK",
+      "withNodeCode": true,
+      "enabled": true
+    },
+    {
+      "id": "OK",
+      "prefix": "OK",
+      "withNodeCode": false,
+      "enabled": false
+    }
+  ]
+}

@@ -1,0 +1,11 @@
+{
+  "apiVersion": 2,
+  "name": "CNKD Gate D Fault Recovery Probe",
+  "internalName": "gated.fault-recovery-probe",
+  "author": "CNKD Gate D",
+  "main": "net.cnkd.gated.FaultRecoveryProbePlugin",
+  "description": "Controlled V2 callback failure and next-game recovery fixture",
+  "version": "1.0.0",
+  "supportedVersions": ">= 1.1.0",
+  "capabilities": ["player-commands", "game-events"]
+}

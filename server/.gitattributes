@@ -1,0 +1,15 @@
+# 默认按文本存储，保证跨平台检出内容一致
+* text=auto eol=crlf
+
+*.sh      text eol=lf
+gradlew   text eol=lf
+
+# 二进制资产：不做换行与 diff 处理
+*.jar     binary
+*.bin     binary
+*.7z      binary
+*.png     binary
+*.ogg     binary
+*.wav     binary
+*.zip     binary
+*.class   binary

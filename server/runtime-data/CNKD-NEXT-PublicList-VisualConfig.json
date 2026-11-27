@@ -1,0 +1,464 @@
+{
+  "schemaVersion": 1,
+  "key": "cnkd-next-public-list-standard-config",
+  "label": "CNKD NEXT 公共列表标准服配置",
+  "description": "用于免授权公共列表支持版。仅包含稳定的单房间和公共列表开关；不包含广告跳转、列表实验、推广、置顶或伪造列表展示字段。保存后重启服务端生效。",
+  "files": [
+    {
+      "key": "cnkd-next-public-list-server-config",
+      "path": "data/ServerConfig.json",
+      "label": "CNKD NEXT 公共列表服务器配置",
+      "format": "json",
+      "description": "管理端口、公共列表、房间规则、地图、大厅提示、后台输出和低延迟开关。",
+      "fields": [
+        {
+          "key": "common-port",
+          "type": "number",
+          "label": "游戏端口",
+          "valuePath": "common.port",
+          "description": "玩家连接使用的端口。修改后需同步检查安全组和系统防火墙。",
+          "defaultValue": 5123,
+          "min": 1,
+          "max": 65535,
+          "requiresRestart": true
+        },
+        {
+          "key": "common-server-name",
+          "type": "string",
+          "label": "服务器名称",
+          "valuePath": "common.serverName",
+          "description": "玩家在公共列表和战役室中看到的主要名称。",
+          "defaultValue": "CNKD NEXT Start 服",
+          "requiresRestart": true
+        },
+        {
+          "key": "common-chat-sender-name",
+          "type": "string",
+          "label": "系统消息名称",
+          "valuePath": "common.chatSenderName",
+          "description": "服务端提示消息在聊天栏中显示的名称。",
+          "defaultValue": "CNKD",
+          "requiresRestart": true
+        },
+        {
+          "key": "common-subtitle",
+          "type": "string",
+          "label": "房间副标题",
+          "valuePath": "common.subtitle",
+          "description": "房间信息的补充说明。公开服建议留空，避免影响列表可读性。",
+          "defaultValue": "",
+          "requiresRestart": true
+        },
+        {
+          "key": "common-auto-uplist",
+          "type": "boolean",
+          "label": "开放公共列表",
+          "valuePath": "common.autoUpList",
+          "description": "开启后，服务端启动时自动上传到公共列表。当前免授权列表支持版允许开启，默认关闭。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "common-list-status-suffix-enabled",
+          "type": "boolean",
+          "label": "列表状态后缀",
+          "valuePath": "common.listStatusSuffixEnabled",
+          "description": "在公共列表名称后附加空闲、正常、繁忙或游戏中等状态。关闭时名称保持稳定。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-passwd",
+          "type": "string",
+          "label": "房间密码",
+          "valuePath": "gameplay.passwd",
+          "description": "留空表示不设置进入密码。",
+          "defaultValue": "",
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-max-player",
+          "type": "number",
+          "label": "最大玩家数",
+          "valuePath": "gameplay.maxPlayer",
+          "description": "房间允许加入的最大玩家数量。人数越高，对地图、模组和实例资源要求越高。",
+          "defaultValue": 100,
+          "min": 2,
+          "max": 100,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-enable-ai",
+          "type": "boolean",
+          "label": "允许 AI",
+          "valuePath": "gameplay.enableAI",
+          "description": "是否允许在房间内添加 AI 玩家。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-max-unit",
+          "type": "number",
+          "label": "单位上限",
+          "valuePath": "gameplay.maxUnit",
+          "description": "单名玩家可拥有的单位数量上限。提高该值会增加运行内存和同步压力。",
+          "defaultValue": 1000,
+          "min": 5,
+          "max": 5000,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-default-income",
+          "type": "number",
+          "label": "默认收入倍率",
+          "valuePath": "gameplay.defIncome",
+          "description": "房间默认收入倍率。",
+          "defaultValue": 1,
+          "min": 0,
+          "max": 10,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-default-credits",
+          "type": "number",
+          "label": "默认初始资金",
+          "valuePath": "gameplay.defaultStartingCreditsAmount",
+          "description": "玩家开局时的默认初始资金。",
+          "defaultValue": 4000,
+          "min": 0,
+          "max": 200000,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-disable-nukes",
+          "type": "boolean",
+          "label": "禁用核弹",
+          "valuePath": "gameplay.disableNukes",
+          "description": "仅设置新战役室的默认禁核状态；开局优先采用当前房主在原版战役室中的选择，房主转移后旧选择失效，配置重载不会覆盖当前房间。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-default-fog-mode",
+          "type": "select",
+          "label": "默认迷雾模式",
+          "valuePath": "gameplay.defaultFogMode",
+          "description": "建议保持默认视野迷雾。",
+          "options": [
+            "lineOfSight",
+            "fog",
+            "none"
+          ],
+          "defaultValue": "lineOfSight",
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-auto-start-min-player-size",
+          "type": "number",
+          "label": "自动开局人数",
+          "valuePath": "gameplay.autoStartMinPlayerSize",
+          "description": "-1 表示关闭自动开局；其他数值表示达到人数后触发倒计时。",
+          "defaultValue": -1,
+          "min": -1,
+          "max": 100,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-auto-start-countdown-seconds",
+          "type": "number",
+          "label": "自动开局倒计时",
+          "valuePath": "gameplay.autoStartCountdownSeconds",
+          "description": "满足自动开局人数后的倒计时秒数。",
+          "defaultValue": 5,
+          "min": 0,
+          "max": 300,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-start-min-player-size",
+          "type": "number",
+          "label": "最低手动开局人数",
+          "valuePath": "gameplay.startMinPlayerSize",
+          "description": "-1 表示不限制；设置为 2 时，至少两名玩家才可手动开局。",
+          "defaultValue": -1,
+          "min": -1,
+          "max": 100,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-max-game-time",
+          "type": "number",
+          "label": "最长对局时间",
+          "valuePath": "gameplay.maxGameIngTime",
+          "description": "单位为秒。7200 秒等于两小时。",
+          "defaultValue": 7200,
+          "min": 600,
+          "max": 21600,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-max-only-ai-game-time",
+          "type": "number",
+          "label": "仅剩 AI 兜底时长",
+          "valuePath": "gameplay.maxOnlyAIGameIngTime",
+          "description": "房间只剩 AI 或没有真人时的兜底结束时间，单位为秒。",
+          "defaultValue": 3600,
+          "min": 60,
+          "max": 21600,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-one-admin",
+          "type": "boolean",
+          "label": "保持至少一个房主",
+          "valuePath": "gameplay.oneAdmin",
+          "description": "开启后自动授予并尽量转移普通房主；关闭后客户端和服务端同时停用普通玩家房主权限，后台 superAdmin 仍可管理。",
+          "defaultValue": true,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-max-message-len",
+          "type": "number",
+          "label": "聊天最大长度",
+          "valuePath": "gameplay.maxMessageLen",
+          "description": "限制玩家单条聊天消息长度。",
+          "defaultValue": 100,
+          "min": 10,
+          "max": 200,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-is-afk",
+          "type": "boolean",
+          "label": "启用 AFK 检测",
+          "valuePath": "gameplay.isAfk",
+          "description": "允许服务端识别长期无操作玩家，供房间接管逻辑使用。",
+          "defaultValue": true,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-mute-all",
+          "type": "boolean",
+          "label": "全员禁言",
+          "valuePath": "gameplay.muteAll",
+          "description": "开启后限制普通聊天消息。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-save-replay-file",
+          "type": "boolean",
+          "label": "保存回放文件",
+          "valuePath": "gameplay.saveRePlayFile",
+          "description": "开启后保存对局回放，会增加磁盘占用。",
+          "defaultValue": true,
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-enter-notice",
+          "type": "string",
+          "label": "入房提示",
+          "valuePath": "gameplay.enterAd",
+          "description": "玩家进入房间时展示的普通提示。留空则不显示。",
+          "defaultValue": "欢迎加入本服务器",
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-start-notice",
+          "type": "string",
+          "label": "开局提示",
+          "valuePath": "gameplay.startAd",
+          "description": "游戏开始时展示的普通提示。留空则不显示。",
+          "defaultValue": "服务器已就绪！",
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-full-room-notice",
+          "type": "string",
+          "label": "房间已满提示",
+          "valuePath": "gameplay.maxPlayerJoinAd",
+          "description": "房间人数已满时展示的提示。留空则不显示。",
+          "defaultValue": "房间已达到管理员设置的人数上限 请稍后再试 @CNKD",
+          "requiresRestart": true
+        },
+        {
+          "key": "gameplay-started-room-notice",
+          "type": "string",
+          "label": "对局进行中提示",
+          "valuePath": "gameplay.startPlayerJoinAd",
+          "description": "对局已经开始后，玩家尝试加入时展示的提示。留空则不显示。",
+          "defaultValue": "对局正在进行中 请稍后再试 @CNKD",
+          "requiresRestart": true
+        },
+        {
+          "key": "map-enable-map-lock",
+          "type": "boolean",
+          "label": "启用锁图",
+          "valuePath": "map.enableMapLock",
+          "description": "开启后，实例固定使用指定地图。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "map-lock-map",
+          "type": "string",
+          "label": "锁定地图",
+          "valuePath": "map.lockMap",
+          "description": "填写地图文件名或平台约定的地图标识。未启用锁图时可留空。",
+          "defaultValue": "",
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-disable-team-change",
+          "type": "boolean",
+          "label": "禁止换队",
+          "valuePath": "lobby.disableTeamChange",
+          "description": "开启后，玩家不能自行调整队伍。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-disable-position-change",
+          "type": "boolean",
+          "label": "禁止换位置",
+          "valuePath": "lobby.disablePositionChange",
+          "description": "开启后，玩家不能自行调整出生位置。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-enable-free-for-all-mode",
+          "type": "boolean",
+          "label": "自由混战模式",
+          "valuePath": "lobby.enableFreeForAllMode",
+          "description": "开启后，房间按自由混战规则处理队伍关系。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-enable-alternate-teams-on-join",
+          "type": "boolean",
+          "label": "入房自动交替分队",
+          "valuePath": "lobby.enableAlternateTeamsOnJoin",
+          "description": "新玩家加入时按顺序分配到不同队伍。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-enable-survival-map-mode",
+          "type": "boolean",
+          "label": "生存地图模式",
+          "valuePath": "lobby.enableSurvivalMapMode",
+          "description": "仅在使用生存地图时开启。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-survival-game-over-grace-seconds",
+          "type": "number",
+          "label": "生存模式结束缓冲",
+          "valuePath": "lobby.survivalGameOverGraceSeconds",
+          "description": "生存图满足结束条件后的延迟确认时间，单位为秒。",
+          "defaultValue": 180,
+          "min": 0,
+          "max": 1800,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-enable-individual-surrender",
+          "type": "boolean",
+          "label": "允许个人投降",
+          "valuePath": "lobby.enableIndividualSurrender",
+          "description": "开启后原版按钮和投降命令均按个人投降处理；默认关闭时使用团队投票，票齐后仍提交原版投降动作。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-enable-game-over-battle-room-return",
+          "type": "boolean",
+          "label": "结束后返回战役室",
+          "valuePath": "lobby.enableGameOverBattleRoomReturn",
+          "description": "默认关闭。只有显式开启才自动返回战役室；关闭时服务器倒计时后强制重置，玩家需要重新进入。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-game-over-return-countdown-seconds",
+          "type": "number",
+          "label": "赛后处理等待时间",
+          "valuePath": "lobby.gameOverReturnCountdownSeconds",
+          "description": "自动返回战役室或服务器强制重置前共用的等待秒数。",
+          "defaultValue": 30,
+          "min": 5,
+          "max": 300,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-prune-disconnected-players-on-game-over",
+          "type": "boolean",
+          "label": "结束时清理离线玩家",
+          "valuePath": "lobby.pruneDisconnectedPlayersOnGameOver",
+          "description": "对局结束时清理已经断开的玩家槽位。",
+          "defaultValue": true,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-enable-join-readiness-tips",
+          "type": "boolean",
+          "label": "轻量入房提示",
+          "valuePath": "lobby.enableJoinReadinessTips",
+          "description": "默认关闭，减少对原版入房体验的干扰。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "lobby-join-tip-mod-warning-threshold",
+          "type": "number",
+          "label": "模组提示阈值",
+          "valuePath": "lobby.joinTipModWarningThreshold",
+          "description": "启用轻量入房提示时，达到此数量的模组警告才显示提示。",
+          "defaultValue": 1,
+          "min": 1,
+          "max": 100,
+          "requiresRestart": true
+        },
+        {
+          "key": "console-show-player-join-leave",
+          "type": "boolean",
+          "label": "显示玩家进出日志",
+          "valuePath": "console.showPlayerJoinLeave",
+          "description": "控制台是否显示玩家加入和离开记录。",
+          "defaultValue": true,
+          "requiresRestart": true
+        },
+        {
+          "key": "console-show-player-chat",
+          "type": "boolean",
+          "label": "显示玩家聊天日志",
+          "valuePath": "console.showPlayerChat",
+          "description": "控制台是否显示普通聊天内容。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "console-show-low-latency-summary",
+          "type": "boolean",
+          "label": "显示低延迟汇总",
+          "valuePath": "console.showLowLatencySummary",
+          "description": "仅在排查性能时开启；默认关闭以降低后台日志密度。",
+          "defaultValue": false,
+          "requiresRestart": true
+        },
+        {
+          "key": "low-latency-enabled",
+          "type": "boolean",
+          "label": "单房间低延迟模式",
+          "valuePath": "singleRoomLowLatency.enabled",
+          "description": "默认开启。若出现兼容性问题，可临时关闭用于对照排查。",
+          "defaultValue": true,
+          "requiresRestart": true
+        }
+      ]
+    }
+  ]
+}

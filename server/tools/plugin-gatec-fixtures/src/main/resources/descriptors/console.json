@@ -1,0 +1,11 @@
+{
+  "apiVersion": 2,
+  "name": "CNKD Gate C Console Probe",
+  "internalName": "gatec.console-probe",
+  "author": "CNKD Gate C",
+  "main": "net.cnkd.gatec.ConsoleProbePlugin",
+  "description": "Gate C console command fixture",
+  "version": "1.0.0",
+  "supportedVersions": ">= 1.1.0",
+  "capabilities": ["console-commands"]
+}

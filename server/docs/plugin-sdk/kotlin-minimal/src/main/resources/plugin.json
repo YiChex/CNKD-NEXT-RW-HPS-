@@ -1,0 +1,16 @@
+{
+  "$schema": "../../../../plugin-v2.schema.json",
+  "apiVersion": 2,
+  "name": "CNKD Kotlin Welcome",
+  "internalName": "example.kotlin-welcome",
+  "author": "Example Developer",
+  "main": "example.cnkd.KotlinWelcomePlugin",
+  "description": "Minimal Kotlin CNKD NEXT V2 plugin",
+  "version": "1.0.0",
+  "supportedVersions": ">= 1.3.0",
+  "capabilities": [
+    "player-commands",
+    "player-events",
+    "read-state"
+  ]
+}

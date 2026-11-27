@@ -1,0 +1,33 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cnkd-next:schema:sdk-manifest-v1",
+  "title": "CNKD NEXT Plugin SDK Manifest",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schemaVersion", "generatedAt", "apiVersion", "toolVersion", "status", "assetCount", "missingCount", "assets", "missing", "warnings"],
+  "properties": {
+    "schemaVersion": { "const": 1 },
+    "generatedAt": { "type": "string", "minLength": 1 },
+    "apiVersion": { "type": "string", "minLength": 1 },
+    "toolVersion": { "type": "string", "minLength": 1 },
+    "status": { "enum": ["PASS", "WARN", "FAIL", "UNKNOWN"] },
+    "assetCount": { "type": "integer", "minimum": 0 },
+    "missingCount": { "type": "integer", "minimum": 0 },
+    "assets": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["path", "kind", "size", "sha256"],
+        "properties": {
+          "path": { "type": "string", "pattern": "^[^/].*" },
+          "kind": { "type": "string", "minLength": 1 },
+          "size": { "type": "integer", "minimum": 0 },
+          "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" }
+        }
+      }
+    },
+    "missing": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } }
+  }
+}

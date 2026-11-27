@@ -1,0 +1,15 @@
+{
+  "repositoryRole": "host",
+  "snapshotCommit": "336da9b055116ec02acf490c3b14dd97d2688832",
+  "containsGitMetadata": false,
+  "handoffDate": "2026-11-19",
+  "originalBinarySourceCommit": "e56f174",
+  "packagingChanges": [
+    "original host worktree delta already applied; explicit provenance Gradle properties",
+    "line ending normalization for scripts and exact released resource representation"
+  ],
+  "sourceUrlUpdate": "af96578",
+  "publicDistribution": "2.3.2",
+  "hostVersion": "1.1.24",
+  "pluginApi": "1.3.0"
+}

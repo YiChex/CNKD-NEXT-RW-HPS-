@@ -1,0 +1,31 @@
+{
+  "enable": true,
+  "hotReloadSeconds": 5,
+  "relayServerMode": {
+    "enable": true,
+    "roomCount": 4,
+    "publicPorts": [5201, 5202, 5203, 5204],
+    "roomIdPrefix": "RS",
+    "roomIdDigits": 5,
+    "isMod": false,
+    "publicPriority": 4000,
+    "defaultListName": "",
+    "defaultMapName": "RELAY-CN 自定义房间",
+    "hostClaimNotice": "",
+    "roomWelcome": "",
+    "roomChatNotice": "",
+    "hostChatNotice": "",
+    "chatSender": "RELAY-CN",
+    "joinBaseUrl": "beijing-relay.cnkd.fun",
+    "connectHost": "beijing-relay.cnkd.fun",
+    "connectPort": 5123,
+    "maxPlayerSize": 50,
+    "maxUnitSize": 200,
+    "income": 1.0,
+    "enableAutoAdjustMaxPlayer": true,
+    "autoAdjustMaxPlayerMin": 4,
+    "autoAdjustMaxPlayerMax": 50,
+    "listUpdateSeconds": 60
+  },
+  "rooms": []
+}

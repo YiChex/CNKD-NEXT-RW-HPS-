@@ -1,0 +1,102 @@
+CNKD NEXT 数据 API 对接说明
+============================================================
+
+这份文档面向后台面板、监控系统和自动化运维脚本。
+目标是减少高频轮询对游戏主链路的影响，同时让管理员能快速判断接口是否命中缓存。
+
+一、Relay 状态接口
+------------------------------------------------------------
+
+默认路径:
+/relay/status
+
+常用示例:
+/relay/status?limit=20
+/relay/status?limit=50&refresh=true
+
+参数:
+- limit: 返回公开房间数量，范围 1-100。
+- refresh=true: 跳过短缓存，强制重新构建状态。
+- nocache=true 或 force=true: 与 refresh=true 等价。
+
+响应头:
+- X-Relay-Api-Cache: HIT 或 MISS。
+- X-Relay-Api-Cache-Age-Millis: 缓存年龄。
+- X-Relay-Api-Cache-Ttl-Millis: 当前缓存 TTL。
+
+配置项:
+- RelayApiConfig.json 中 statusApiCacheMillis，默认 2000。
+- 设置为 0 可关闭接口缓存，但不建议监控高频轮询时关闭。
+
+二、Relay 房间接口
+------------------------------------------------------------
+
+默认路径:
+/relay/rooms
+
+常用示例:
+/relay/rooms?limit=200
+/relay/rooms?includeClosed=true&limit=1000
+/relay/rooms?limit=100&refresh=true
+
+参数:
+- limit: 返回房间数量，范围 1-10000。
+- includeClosed: 是否包含已关闭房间。
+- refresh=true / nocache=true / force=true: 跳过短缓存。
+
+配置项:
+- RelayApiConfig.json 中 roomsApiCacheMillis，默认 3000。
+- RelayApiConfig.json 中 roomsApiLimit，默认 1000。
+- RelayApiConfig.json 中 roomsApiIncludeClosed，默认 false。
+
+三、Admin 接口
+------------------------------------------------------------
+
+默认路径:
+/relay/admin
+
+认证:
+- Header: Authorization: Bearer <adminApiToken>
+- 或 Header: X-Relay-Admin-Token: <adminApiToken>
+
+支持动作:
+- status
+- rooms
+- ban_ip
+- unban_ip
+- ban_ip24
+- unban_ip24
+
+注意:
+- ban/unban 类动作会主动清空读取型 API 缓存，避免状态短暂不一致。
+- Admin 接口建议开启 IP 白名单。
+- adminApiToken 不要使用空值或示例值。
+
+四、对接建议
+------------------------------------------------------------
+
+- 面板刷新频率建议 3-10 秒一次，不要 1 秒多次拉取完整 rooms。
+- 普通监控使用 /relay/status?limit=20 即可。
+- 只有人工点击“刷新”时再加 refresh=true。
+- 如果外部系统只需要房间数，不要拉取 includeClosed=true。
+- 看到 X-Relay-Api-Cache=HIT 代表服务端没有重复构建完整状态，这是正常且推荐的。
+
+五、常见问题
+------------------------------------------------------------
+
+接口返回 forbidden:
+- 检查对应 API 是否开启。
+- 检查 IP 白名单。
+- 检查授权是否包含 rooms_api 或 admin_api。
+
+接口返回 unauthorized:
+- 检查 adminApiToken。
+- 检查 Authorization 或 X-Relay-Admin-Token 请求头。
+
+接口偶尔返回 MISS:
+- 缓存过期或使用了 refresh=true，这是正常情况。
+
+接口大量 MISS 且服务器卡顿:
+- 降低外部面板刷新频率。
+- 增大 statusApiCacheMillis / roomsApiCacheMillis。
+- 不要让多个监控系统同时高频拉取 rooms。

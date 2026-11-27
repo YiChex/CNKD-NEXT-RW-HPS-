@@ -1,0 +1,61 @@
+CNKD NEXT 数据 API 与配置自检补充说明
+============================================================
+
+一、新增后台命令
+------------------------------------------------------------
+
+api status
+- 查看 Relay 数据 API 的请求数、缓存命中/未命中、限流次数和错误次数。
+- 当外部面板导致服务器卡顿时，优先看 rooms 接口是否大量 MISS 或 rateLimited。
+
+config check
+configcheck
+- 只读检查 ServerConfig.json、RelayLicenseConfig.json 和 RelayApiConfig.json。
+- 不会自动修改文件，适合上线前、热重载后、公开列表异常时执行。
+- 重点检查端口范围、公开列表授权、地图锁、Web/RCON 密码、API Token、缓存和限流配置。
+
+二、新增 RelayApiConfig.json 字段
+------------------------------------------------------------
+
+statusApiCacheMillis
+- 默认 2000。
+- /relay/status 的短缓存时间，建议保持 1000-5000。
+
+roomsApiCacheMillis
+- 默认 3000。
+- /relay/rooms 的短缓存时间，建议保持 3000-10000。
+
+apiRateLimitEnabled
+- 默认 true。
+- 开启后按 IP 和接口类型做每分钟固定窗口限流。
+
+statusApiRateLimitPerMinute
+- 默认 120。
+- 状态接口每个 IP 每分钟允许请求次数。
+
+roomsApiRateLimitPerMinute
+- 默认 60。
+- 房间列表接口每个 IP 每分钟允许请求次数。rooms 数据更重，不建议设置过高。
+
+adminApiRateLimitPerMinute
+- 默认 30。
+- 管理接口每个 IP 每分钟允许请求次数。
+
+三、对接建议
+------------------------------------------------------------
+
+- 外部面板默认轮询 /relay/status?limit=20。
+- 只有进入详情页或人工刷新时再请求 /relay/rooms。
+- 不建议让多个面板同时 1 秒多次拉取 includeClosed=true 的完整房间列表。
+- 如果出现 HTTP 429，说明触发限流；应降低面板轮询频率，而不是关闭限流。
+- 如果 api status 中 rooms.cache.miss 持续很高，建议增大 roomsApiCacheMillis 或减少 refresh=true。
+
+四、排查顺序
+------------------------------------------------------------
+
+1. config check
+2. api status
+3. health
+4. uplist status
+
+这四个命令可以覆盖大多数“面板卡顿、公开列表不可见、接口不稳定、配置填错”的第一轮排查。

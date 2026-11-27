@@ -1,0 +1,57 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cnkd-next:schema:plugin-v2",
+  "title": "CNKD NEXT Plugin Descriptor V2",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "apiVersion",
+    "name",
+    "internalName",
+    "author",
+    "main",
+    "description",
+    "version",
+    "supportedVersions",
+    "capabilities"
+  ],
+  "properties": {
+    "$schema": { "type": "string" },
+    "apiVersion": { "const": 2 },
+    "name": { "type": "string", "minLength": 1, "maxLength": 96 },
+    "internalName": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9._-]{0,63}$",
+      "not": { "enum": ["hessserver", "uplist", "connectlimit", "bindplayer"] }
+    },
+    "author": { "type": "string", "minLength": 1, "maxLength": 160 },
+    "main": {
+      "type": "string",
+      "pattern": "^[A-Za-z_$][A-Za-z0-9_$]*(\\.[A-Za-z_$][A-Za-z0-9_$]*)*$",
+      "not": { "pattern": "^net\\.rwhps\\.server\\." }
+    },
+    "description": { "type": "string", "maxLength": 500 },
+    "version": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:\\.(0|[1-9][0-9]*))?(?:-[0-9A-Za-z.-]+)?(?:\\+[0-9A-Za-z.-]+)?$"
+    },
+    "supportedVersions": { "type": "string", "minLength": 1, "maxLength": 96 },
+    "capabilities": {
+      "type": "array",
+      "maxItems": 32,
+      "uniqueItems": true,
+      "items": {
+        "enum": [
+          "console-commands",
+          "player-commands",
+          "player-events",
+          "game-events",
+          "broadcast",
+          "scheduler",
+          "read-state",
+          "read-statistics"
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,47 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "urn:cnkd-next:schema:plugin-lock-v1",
+  "title": "CNKD NEXT External Plugin Approval Lock",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["lockVersion", "plugins"],
+  "properties": {
+    "lockVersion": { "const": 1 },
+    "plugins": {
+      "type": "array",
+      "maxItems": 512,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "internalName",
+          "apiVersion",
+          "version",
+          "fileName",
+          "sha256",
+          "descriptorSha256",
+          "approvedAt",
+          "approvedBy"
+        ],
+        "properties": {
+          "internalName": {
+            "type": "string",
+            "pattern": "^[A-Za-z0-9][A-Za-z0-9._-]{0,63}$"
+          },
+          "apiVersion": { "type": "integer", "minimum": 1, "maximum": 2 },
+          "version": { "type": "string", "minLength": 1, "maxLength": 96 },
+          "fileName": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 255,
+            "pattern": "^[^/\\\\]+\\.([jJ][aA][rR]|[zZ][iI][pP])$"
+          },
+          "sha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "descriptorSha256": { "type": "string", "pattern": "^[A-Fa-f0-9]{64}$" },
+          "approvedAt": { "type": "string", "format": "date-time" },
+          "approvedBy": { "type": "string", "minLength": 1, "maxLength": 128 }
+        }
+      }
+    }
+  }
+}

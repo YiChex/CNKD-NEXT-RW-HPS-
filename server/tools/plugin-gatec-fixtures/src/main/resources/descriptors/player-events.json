@@ -1,0 +1,11 @@
+{
+  "apiVersion": 2,
+  "name": "CNKD Gate C Player Events Probe",
+  "internalName": "gatec.player-events-probe",
+  "author": "CNKD Gate C",
+  "main": "net.cnkd.gatec.PlayerEventsProbePlugin",
+  "description": "Gate C player event fixture",
+  "version": "1.0.0",
+  "supportedVersions": ">= 1.1.0",
+  "capabilities": ["player-events"]
+}

@@ -1,0 +1,11 @@
+{
+  "apiVersion": 2,
+  "name": "CNKD Gate C Player Command Probe",
+  "internalName": "gatec.player-command-probe",
+  "author": "CNKD Gate C",
+  "main": "net.cnkd.gatec.PlayerCommandProbePlugin",
+  "description": "Gate C player command fixture",
+  "version": "1.0.0",
+  "supportedVersions": ">= 1.1.0",
+  "capabilities": ["player-commands"]
+}

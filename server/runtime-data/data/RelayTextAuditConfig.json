@@ -1,0 +1,18 @@
+{
+  "enable": false,
+  "providerName": "ET",
+  "endpoint": "",
+  "headers": {
+    "Content-Type": "application/json"
+  },
+  "requestTemplate": "{\"text\":{text_json},\"field\":{field_json},\"provider\":{provider_json},\"scene\":\"relay_public_room\"}",
+  "responseAllowPath": "",
+  "responseAllowValues": "true,allow,pass,ok",
+  "responseBlockPath": "",
+  "responseBlockValues": "false,block,reject,deny",
+  "responseTextPath": "",
+  "rejectFallbackText": "[内容审核中]",
+  "allowOnError": true,
+  "denyPublicRoomWhenRejected": false,
+  "cacheSeconds": 300
+}

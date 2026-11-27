@@ -1,0 +1,401 @@
+CNKD NEXT 单房间服务端 用户配置与部署说明
+
+一、这个包是什么
+
+这是一个面向普通服主使用的单房间服务端包。
+适合开一个独立房间、活动房、娱乐房、团战房或混战房。
+不同发布包可能分别允许或禁止 UPLIST，请以发布包名称、启动日志中的 RelayLicense 结果和包内说明为准。
+免授权包通常不要求填写 data/RelayLicenseConfig.json，但免授权不代表可以忽略开源许可和署名要求。
+
+当前单房间构建已包含战役室返回和第二局恢复修复：返回后阻断上一局残留同步和单位操作，清理失效断线槽位，完成大厅恢复后才允许再次开局。
+自定义地图开始包会在开局前验证，原版核心未接受开始时可自动释放开始锁。
+
+二、目录说明
+
+Server-All.jar
+服务端主程序。
+
+start.sh
+Linux 常规启动脚本。
+
+start-lowmem.sh
+Linux 低内存启动脚本。
+
+start-windows.bat
+Windows 启动脚本。
+
+data/ServerConfig.json
+最重要的服务端配置文件。
+端口、服务器名称、人数、自动开局、地图锁定、公共列表开关都在这里修改。
+是否允许公共列表上传取决于发布包构建类型；允许 UPLIST 的包需要把 common.autoUpList 改为 true。
+
+data/RoomPermissionConfig.json
+房主、管理员、普通玩家可以使用哪些房间指令。
+
+data/RelayLicenseConfig.json
+授权配置。
+本包免授权，通常不需要修改。
+
+data/maps
+自定义地图目录。
+你可以把 .tmx 地图放在这里。
+
+data/mods
+模组目录。
+你可以把 .rwmod 或 zip 模组放在这里。
+
+三、Linux 云服务器部署流程
+
+1. 安装 Java
+
+推荐 Java 17 或更高版本。
+
+Ubuntu 或 Debian 示例：
+apt update
+apt install -y openjdk-17-jre-headless unzip
+
+CentOS 示例：
+yum install -y java-17-openjdk unzip
+
+检查 Java：
+java -version
+
+2. 上传并解压
+
+把压缩包上传到服务器，例如 /opt。
+
+cd /opt
+unzip CNKD-NEXT-<version>-<variant>.zip
+cd CNKD-NEXT-<version>-<variant>
+
+3. 允许脚本执行
+
+chmod +x start.sh start-lowmem.sh
+
+4. 修改配置
+
+编辑 data/ServerConfig.json。
+
+最少需要确认这些字段：
+
+common.port
+玩家进入服务器使用的端口。
+默认 5123。
+如果你的云服务器安全组只开放了某个端口，请改成对应端口。
+
+common.serverName
+服务器名称。
+会显示在房间内和服务器信息相关位置。
+
+common.chatSenderName
+服务器系统消息在游戏消息栏中的发送者名称。
+默认 CNKD，可改为中文或英文短词。
+
+common.errorLogMaxSizeMb 和 common.errorLogRetainFiles
+控制 data/log/Log.txt 的错误日志轮转。
+默认单文件 8 MB，保留 3 个历史文件，最多占用约 32 MB。
+Log.txt 达到上限后会依次轮转为 Log.txt.1、Log.txt.2、Log.txt.3。
+errorLogMaxSizeMb 可设 1 到 64，errorLogRetainFiles 可设 0 到 10；修改后执行 reloadconfig 即可生效。
+
+console
+后台控制台降噪配置。
+当前建议保持默认值；这些开关已用于控制聊天、低延迟指标、进出服和 Survival 修复提示等后台输出。
+如果后台太吵，优先保持 verbosity=normal，并关闭对应 show 开关；需要临时排查时可改为 verbose 或 debug。
+
+当前默认低延迟档
+当前随包默认使用低延迟实测档：lead 8/8、120 FPS、1 worker、direct writes。
+含义：服务端注入指令和 Hess 出站指令都使用 8 tick 提前量，Headless 主循环提高到 120 FPS，单房间 Netty worker 固定为 1，同 eventLoop 写出时启用 direct writes。
+这组默认值优先用于线上首轮测试：帧等待更短但 CPU 压力高于 60 FPS。如果出现帧抖动、多人回弹、掉指令或 bridge/preTick failed，先执行 lowlatency apply stable，或将 headlessFpsOverride 改回 60，而不是直接关闭低延迟。
+如果 lowlatency status/summary 出现 engineBridgeFused=true，说明底层 engine/Hess 桥接失败后已自动熔断快路径并回退原版转发链路，优先保留现场日志再反馈。
+
+lowlatency apply
+后台低延迟运行期档位切换命令。
+常用：lowlatency apply stable 切换稳健档；lowlatency apply B.recommended 或 lowlatency apply recommended 切换推荐档；lowlatency apply C.aggressive 或 lowlatency apply aggressive 切换激进实测档；lowlatency apply lowMemory 使用稳健参数并关闭指标采样；lowlatency apply production 保持当前低延迟参数但关闭指标采样；lowlatency apply test 保持当前低延迟参数并恢复指标采样；lowlatency apply config 回到 ServerConfig.json。
+排障：lowlatency apply off 仅用于人工应急对照，用来确认异常是否来自低延迟路径；实战中优先保留 stable 或 recommended。
+体验档位含义：stable 适合大图、重 MOD、低配机器或故障隔离；recommended 是默认首轮主测档；aggressive 只在 recommended 稳定后继续压低体感延迟时使用；lowMemory 用于长期低开销运行或后台指标不需要持续采样的场景。
+该命令只影响当前进程，不会写回配置文件。
+注意：profile 中的 lead、FPS、direct writes 等运行期值会立即影响当前进程；nettyWorkerThreadsOverride 属于启动期参数，只有修改 ServerConfig.json 后重启服务端才会重建 Netty worker group。
+如果实测稳定后希望长期低开销运行，可编辑 data/ServerConfig.json，把 singleRoomLowLatency.metricsEnabled 改为 false 后重启服务端；下次需要重新实测时再改回 true，或启动后临时执行 lowlatency apply test。
+
+lowlatency advise
+后台低延迟降级建议命令。
+建议每轮实测前先执行 lowlatency reset，实测后先执行 lowlatency readout，再执行 lowlatency summary 和 lowlatency advise；只有异常或结论不清楚时再执行 lowlatency status。
+重点看 degrade.level 和 degrade.command；该命令只给建议，不会自动修改当前档位。实战中优先按建议回到 stable 或 recommended，尽量保留低延迟 fast path；lowlatency apply off 只作为手动应急对照。
+
+startmode pretest
+后台首轮实测前检查清单命令。
+建议第一次真实联机测试前执行；也可使用别名 startmode checklist、startmode firsttest。
+重点看 pretest.status、pretest.lowLatency.profile、pretest.lowLatency.mode、pretest.joinTips.lowLatencyHint、pretest.warning.*、pretest.sequence.*。
+如果 pretest.status=warn，先处理 warning；如果只是 metrics mode 为 production，执行 lowlatency apply test 后再 lowlatency reset 开测。
+
+lowlatency readout
+后台首轮实测判读入口。
+建议每轮实测流程：startmode pretest -> startmode bootcheck -> lowlatency apply test -> lowlatency reset -> 正常打一局或至少操作 60 秒 -> lowlatency readout。
+重点看 readout.phase、readout.serverResult、readout.clientLatency、readout.bottleneck、readout.decision、readout.action、readout.command。
+原版按钮链路重点看 readout.detail.commandTypes、readout.detail.systemAction 和 readout.detail.systemActionLast；投降按钮正常应让 systemAction 增长，且 systemActionLast=100，地图标点应让 mapPing 增长。
+判读口径：serverResult=ok 且 clientLatency=stable 时保留当前档；serverResult=ok 但 clientLatency=high/jitter/stale 时优先排查玩家网络或路由；serverResult=watch/observe 时再跑一轮；serverResult=degrade/rollback 时按 command 切回 recommended 或 stable，仍优先保持低延迟模式。
+
+玩家入房轻提示
+lobby.enableJoinReadinessTips 控制玩家进房后的一次性提示，默认关闭。
+只有显式改为 true 时，才会显示地图、模组、自动开局等信息；如果 singleRoomLowLatency.enabled=true，还会追加一条“本房已开启低延迟模式”的轻提示。
+该提示不会周期广播，也不会新增聊天刷屏；保持 false 时玩家不会看到入房摘要。
+
+lowlatency summary
+后台低延迟单局实测摘要命令。
+建议每轮实测流程：lowlatency apply test -> lowlatency reset -> 正常打一局或至少操作 60 秒 -> lowlatency readout -> lowlatency summary。
+重点看 experience.state、experience.bottleneck、experience.action、testSummary.result、testSummary.next、fastPct、drainPct、Hess 队列、bridge failed、receiveToEngineAvgMicros 和 receiveToEngineP95Micros；需要详细排查时再看 lowlatency status。
+receiveToEngineP50Micros/P95Micros/MaxMicros 是最近最多 4096 条“服务端收到 GAMECOMMAND 到送入 Hess 引擎队列”的采样窗口，percentileSamples 表示窗口实际样本数。它不等于玩家网络 RTT；空插件与插件对照必须使用相同地图、人数、MOD、档位和持续时间后再比较 P95。
+新包额外暴露 gameCommandPendingMetricPackets；前者用于确认实测指标是否积压。玩家心跳响应只更新采样状态，TEAM_LIST 延迟列由 latencyHeartbeatMillis 定时刷新，避免多人同时回包时反复占用游戏主线程。
+诊断输出中的 latency.teamListRefreshPolicy=timer_only 表示延迟列使用定时刷新；同时关注 latency.teamListRefreshDurationAvgMs、latency.teamListRefreshDurationMaxMs 和 latency.teamListRefreshDurationLastMs，判断 TEAM_LIST 是否占用过多游戏主线程时间。
+新包还额外暴露 testSummary.commandTypes；其中 systemLast=100 可用于确认原版投降按钮走系统动作链路，mapPing 用于确认地图标点，unit/factory 用于确认普通单位和建造操作，classifyFailed 应保持 0。
+正式长期运行前，如果当前档位已经稳定，可执行 lowlatency apply production 降低指标采样开销；再次排查或复测前执行 lowlatency apply test。
+
+lowlatency experience
+后台体感摘要命令。
+只输出 experience.* 结论，适合服主快速判断当前应保持、观察、降档还是回退。experience.command 给出具体建议命令；experience.action 是粗粒度动作，不会自动改参。
+
+startmode bootcheck
+后台首启配置体检摘要命令。
+服务端启动 Start 模式时会自动输出一次同样的摘要；也可以在后台手动执行 startmode bootcheck 复查。
+重点看 boot.status、boot.port、boot.maxPlayer、boot.maxUnit、boot.mapLock、boot.lowLatency.profile、boot.lowLatency.mode、boot.lowLatency.nettyWorkersStartupOnly、boot.flow.autoStartBlockedReason、boot.flow.reconnectState。
+boot.status=warn 只表示存在需要注意的配置或启动期提示，不会阻止服务端启动；需要完整排查时再执行 startmode diagnose。
+
+首轮实测回传格式
+最短执行顺序：startmode pretest -> startmode bootcheck -> lowlatency apply test -> lowlatency reset -> 正常开局操作至少 60 秒 -> lowlatency readout -> lowlatency summary -> lowlatency advise。
+如果出现开局自动结束、无法控制单位、明显回弹或掉指令，再执行 lowlatency status 和 startmode diagnose。
+startmode diagnose 中重点看 autostart.blockedReason、gameOver.lastSettleReason、flow.noOnlineHumanGraceActive、flow.lastNoOnlineHumanReason、reconnect.state、reconnect.lastEvent；这些字段用于区分“服务端正在等待保护宽限”和“真实异常需要回退或排查”。
+回传时至少包含：地图、模式、玩家人数、AI 数量、是否 Survival/战役室、是否使用 MOD、本轮 profile、体感结论、startmode pretest 完整输出、lowlatency readout 完整输出、lowlatency summary 完整输出、lowlatency advise 完整输出。
+异常时再补充：lowlatency status 完整输出、startmode diagnose 完整输出、异常发生前后各约 100 行后台日志。
+玩家体感回传建议每名玩家填写：玩家地区/网络、战役室看到的延迟数字、操作响应评分 1-5、是否比原版更跟手、最明显改善的操作、最明显问题、是否回弹/瞬移、是否点了没反应、是否卡顿但延迟数字不高、是否延迟数字高但操作顺。
+如果反馈原版投降按钮、地图标点或战备室按钮异常，额外回传 lobby.enableIndividualSurrender、readout.detail.commandTypes、readout.detail.systemActionLast 和 testSummary.commandTypes；个人模式按钮应直接投降，默认团队模式按钮应立即显示团队申请进度，票齐后再执行原版投降。
+默认团队投降只要求存活真人参与；已淘汰成员免票。瞬断玩家会先显示“短线重连确认”，宽限结束仍未重连才转为离线免票；成员死亡、确认离线或重连后，广播进度应与 surrenderstatus 一致。
+批量提交如出现部分失败，任一存活队员重新点击投降即可只重试尚未成功入队的成员；开始下一局后不应残留上一局票数、重试或处理中状态。
+归因口径：延迟数字高但操作顺，优先看客户端网络或显示样本；延迟数字低但操作慢，优先看 readout.bottleneck、summary.preTick 和 summary.hessQueue；回弹/瞬移先切 stable；点了没反应且出现 failed/bridge failed 直接回 stable；开局自动结束先看 startmode diagnose，不直接归因到低延迟。
+服主最短回传包：地图、模式、玩家人数、AI 数量、是否 Survival/战役室、是否 MOD、服务端地区/机器、玩家地区概况、本轮 profile、本轮体感结论、多数玩家评分、是否优于原版、是否开局自动结束、是否无法控制单位、是否回弹/瞬移/掉指令、pretest/bootcheck/readout/summary/advise 输出、玩家反馈原文。
+玩家单行反馈：玩家名/地区网络、战役室延迟数字、响应评分 1-5、是否比原版更跟手、最明显改善、最明显问题、是否回弹/瞬移、是否点了没反应/掉指令、是否数字高但操作顺、是否数字低但慢半拍。
+
+实测后参数决策门槛
+保持 recommended：readout 为 ok/watch，多数玩家评分 4-5，没有连续回弹、掉指令、bridge failed 或 preTick failed。
+同档再测：样本不足、只有个别玩家网络异常、玩家反馈分歧大，或 serverResult=observe/watch。
+切 stable：出现 degrade/rollback、多人评分 1-2、明显回弹/瞬移、掉指令、Hess 队列高、bridge/preTick failed。
+进入 production：recommended 或 stable 连续 2-3 轮稳定，多数玩家评分 4-5，没有新异常；production 只关闭指标采样，低延迟行为继续保留。
+尝试 aggressive：recommended 至少 2 轮稳定且玩家仍明确希望继续压低体感延迟；一旦回弹、掉指令或 failed，立即回 recommended/stable。
+off 只用于人工应急对照，不作为长期实战建议；能通过 stable 解决的问题，不直接关闭低延迟模式。
+
+首轮异常第一响应
+startmode pretest 有 warning：先处理 warning；若只是 production 指标模式，执行 lowlatency apply test。
+开局自动结束：先执行 startmode diagnose，看 gameOver.lastSettleReason、survival.runtime.ended、flow.noOnlineHumanGraceActive，不直接关闭低延迟。
+无法控制单位、点了没反应、明显回弹或瞬移：先执行 lowlatency readout、lowlatency summary、lowlatency advise；多人复现或出现 failed/bridge failed 时执行 lowlatency apply stable。
+原版投降按钮无效、地图标点异常或原版按钮没反应：先确认 enableIndividualSurrender；个人模式检查是否直接进入原版投降，团队模式检查是否立即收到申请进度，再看 commandTypes、systemActionLast、gameCommandSystemAction 和 classificationFailed。
+延迟数字高但操作顺：不急着改 profile，先比较多名玩家网络、地区和 stalePlayers。
+延迟数字低但慢半拍：看 summary.preTick、summary.hessQueue、receiveToEngineP95Micros 和 receiveToEngineAvgMicros，按 advise 切 stable/recommended。
+大厅或 Connecting 阶段慢：优先排查 MOD/地图加载，不通过降低大厅同步心跳解决。
+production 模式没有指标：执行 lowlatency apply test 和 lowlatency reset 后重新测试。
+首轮不要做：不要同时改 lead、FPS、worker、MOD、地图和人数；不要只看战役室延迟数字判断同步体感；不要把 lowlatency apply off 当长期实战方案。
+
+gameplay.maxPlayer
+最大玩家数。
+当前单房间模板默认 100；实际建议仍按地图人数和机器性能设置，例如 2、4、8、10、14、16。
+
+gameplay.maxUnit
+最大单位数。
+当前单房间模板默认 1000；低配机器或大型 MOD 服可适当降低。
+
+gameplay.enableAI
+是否允许添加 AI。
+公开竞技服建议 false。
+娱乐服可按需 true。
+
+gameplay.startMinPlayerSize
+最低开局人数。
+-1 表示不限制，房主可以直接开局。
+如果希望至少 2 人才能开局，设置为 2。
+
+gameplay.autoStartMinPlayerSize
+自动开局人数。
+-1 表示关闭自动开局。
+如果希望满 4 人自动倒计时开局，设置为 4。
+
+gameplay.autoStartCountdownSeconds
+自动开局倒计时秒数。
+
+gameplay.maxGameIngTime
+单局最长时间，单位秒。
+默认 7200 秒，也就是 2 小时。
+超过后服务端会执行兜底结束。
+
+gameplay.maxOnlyAIGameIngTime
+房间只剩 AI 或没有真人时的兜底时间，单位秒。
+
+lobby.enableGameOverBattleRoomReturn
+游戏结束后是否自动返回战役室。
+本包默认 false。
+只有显式 true 才会进入自动返回战役室链路并显示对应提示。
+false 或字段缺失时会显示“服务器强制重置”，绝不调用战役室返回链路；重置后玩家需要自行重新进入。
+两种模式都使用下方同一个等待秒数，但提示和客户端动作完全区分。
+这样可以减少旧对局占位和 N/A 玩家残留。
+
+lobby.gameOverReturnCountdownSeconds
+自动返回战役室或服务器强制重置前共用的等待秒数。
+默认 30，运行时限制在 5-300。
+
+lobby.pruneDisconnectedPlayersOnGameOver
+游戏结束或重置时自动清理掉线/N/A 占位玩家。
+建议保持 true。
+
+map.enableMapLock
+是否锁定地图。
+如果你希望服务器只能玩一张指定地图，设置 true。
+
+map.lockMap
+锁定地图名称。
+需要填写服务端能识别到的地图名。
+
+5. 启动
+
+常规启动：
+./start.sh
+
+低内存启动：
+./start-lowmem.sh
+
+如果你想自定义内存：
+JAVA_OPTS="-Xms256m -Xmx1536m" ./start.sh
+
+四、Windows 云服务器启动流程
+
+1. 安装 Java 17 或更高版本。
+2. 解压压缩包到一个英文路径目录。
+3. 修改 data/ServerConfig.json。
+4. 双击 start-windows.bat。
+
+也可以在 CMD 中运行：
+start-windows.bat
+
+如果要自定义内存，可以编辑 start-windows.bat 里的 -Xmx 参数。
+
+五、开放端口
+
+你需要在云服务器安全组和系统防火墙中放行 common.port。
+默认端口是 5123。
+如果你改成 5129，就需要放行 TCP 5129。
+
+六、是否开放到公共列表
+
+先确认当前包是否允许 UPLIST。
+允许 UPLIST 的包：设置 common.autoUpList=true，然后重启并观察启动日志。
+禁止 UPLIST 的包：即使设置 common.autoUpList=true，内部也会拒绝上传。
+免授权包通常不需要配置 licenseKey，但仍应保留兼容配置文件。
+
+如果你需要公共列表，请使用明确标注允许 UPLIST 的独立发布包。
+
+多广告入口使用各自稳定的列表 ID。服务端按保守周期持续更新；master server 暂时超时或列表快照格式异常时，会保留当前上传状态并等待重试，不会因为一次探测异常主动删除并重建广告条目。出现列表消失时，先在控制台执行：
+uplist status
+uplist diagnose
+
+重点查看 snapshot.rows、snapshot.parsed、snapshot.schema、snapshot.complete，以及每个入口的 gs1_id、gs4_id 和 missingConfirmations。complete=false 或 master server unavailable 时，应视为列表探测暂时不可用，不要重复执行 remove。
+
+七、地图配置
+
+方式一：不锁图。
+map.enableMapLock = false
+玩家或房主可以按权限换图。
+
+方式二：锁定一张地图。
+map.enableMapLock = true
+map.lockMap = "你的地图名"
+
+自定义地图放置位置：
+data/maps
+
+地图文件通常是 .tmx。
+
+八、房间权限建议
+
+配置文件：
+data/RoomPermissionConfig.json
+
+公开服建议普通玩家不要开放这些高风险权限：
+allowAddAi
+allowChangeMap
+allowTransferHost
+allowSetCredits
+allowSetIncome
+allowSpawnUnits
+allowAddMoneyInGame
+allowFireNukeInGame
+allowCloneUnits
+
+娱乐服可以适当开放：
+allowVoteGameOver
+allowViewStatus
+allowViewMyId
+allowViewMaps
+
+九、常见问题
+
+1. 玩家进不来
+
+检查 common.port 是否正确。
+检查云服务器安全组是否放行端口。
+检查系统防火墙是否放行端口。
+检查服务端控制台是否正常启动。
+
+2. 公共列表看不到
+
+这是正常现象。
+本包是禁 UPLIST 安全版本，不会上传公共列表。
+如果你需要公共列表，请更换允许 UPLIST 的发布包。
+
+3. 游戏结束后房间没有恢复
+
+本修复版已经加强了房间重置。
+如果仍然出现异常，请保存 data/log/Log.txt 并反馈。
+
+4. 掉线玩家或 N/A 占位无法清除
+
+确认 lobby.pruneDisconnectedPlayersOnGameOver=true。
+如果已经开启仍异常，请重启服务端并保留日志。
+
+5. 内存不足
+
+优先使用：
+./start-lowmem.sh
+
+也可以自定义：
+JAVA_OPTS="-Xms128m -Xmx768m" ./start.sh
+
+十、建议的首次配置模板
+
+普通 4 人娱乐房：
+
+gameplay.maxPlayer = 4
+gameplay.startMinPlayerSize = -1
+gameplay.autoStartMinPlayerSize = -1
+gameplay.enableAI = false
+map.enableMapLock = false
+lobby.enableGameOverBattleRoomReturn = false
+
+14 人混战房：
+
+gameplay.maxPlayer = 14
+gameplay.startMinPlayerSize = 2
+gameplay.autoStartMinPlayerSize = -1
+gameplay.enableAI = false
+lobby.enableFreeForAllMode = true
+lobby.enableGameOverBattleRoomReturn = false
+map.enableMapLock = true
+map.lockMap = "你的14P地图名"
+
+十一、停止服务
+
+如果你在终端中直接运行，按 Ctrl+C 停止。
+如果你用面板运行，在面板中点击停止或重启。
+
+十二、升级建议
+
+升级时不要只替换 Server-All.jar。
+建议完整备份旧目录，然后解压新包。
+再把旧目录中的 data/maps、data/mods 和你确认需要保留的配置迁移到新目录。
+
+如果只是临时测试，也可以完整新建一个目录运行，确认正常后再替换旧服。

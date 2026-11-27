@@ -1,0 +1,21 @@
+{
+  "enable": true,
+  "persistRuntimeChanges": true,
+  "legacySettingsMigrationDone": false,
+  "persistentBlacklistEnabled": true,
+  "persistentAdminEnabled": true,
+  "bannedUUIDs": [],
+  "bannedIPs": [],
+  "bannedIP24": [],
+  "autoHostUUIDs": [],
+  "adminUUIDs": [],
+  "superAdminUUIDs": [],
+  "admins": [
+    {
+      "uuid": "",
+      "name": "示例：填写玩家 .myid 或 myid 显示的 UUID，留空不会生效",
+      "role": "host",
+      "superAdmin": true
+    }
+  ]
+}
