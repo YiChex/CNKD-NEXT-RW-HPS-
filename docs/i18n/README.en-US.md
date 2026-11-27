@@ -44,6 +44,8 @@ The standard host supports postgame analytics through `read-statistics`. The tit
 - Try the server and manage its settings in a visual panel. [CNKD Cloud Instances](https://cloud.cnkd.fun/)
 - Find Rusted Warfare clan tournaments and community events. [CNKD Esports](https://esports.cnkd.fun/)
 - Browse maps and follow updates to the resource site. [CNKD Map Resources](https://rw.cnkd.fun/maps)
+- Connect to the CNKD Rusted Warfare RKC relay node for room-code direct connections and public community play. [CNKD RKC Relay Node](https://www.cnkd.fun/)
+- Explore the CNKD Rusted Warfare central-server showcase and automated lottery server. [CNKD Central Server Showcase](https://lucky.cnkd.fun/)
 
 ## Start here
 

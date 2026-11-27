@@ -44,6 +44,8 @@
 - 快速试用服务端能力，并用可视化面板管理配置。 [CNKD 云实例服务平台](https://cloud.cnkd.fun/)
 - 查看铁锈战争赛事和战队社区活动。 [CNKD 铁锈战争赛事系统](https://esports.cnkd.fun/)
 - 浏览地图。资源库会持续更新。 [CNKD 铁锈战争资源站](https://rw.cnkd.fun/maps)
+- 连接 CNKD 铁锈战争中继节点 RKC，使用房号直连和公益联机服务。 [CNKD RKC 中继节点](https://www.cnkd.fun/)
+- 体验 CNKD 铁锈战争中枢服务器示范系统和自动化抽奖服务器。 [CNKD 青阳云示范系统](https://lucky.cnkd.fun/)
 
 ## 当前发布
 

@@ -44,6 +44,8 @@ La version standard prend en charge les statistiques via `read-statistics`. L’
 - Essayez le serveur et configurez-le dans un panneau visuel. [CNKD Cloud Instances](https://cloud.cnkd.fun/)
 - Retrouvez les tournois et les activités des clans de Rusted Warfare. [CNKD Esports](https://esports.cnkd.fun/)
 - Parcourez les cartes et suivez les mises à jour du site. [CNKD Map Resources](https://rw.cnkd.fun/maps)
+- Connectez-vous au relais RKC de CNKD pour les connexions directes par numéro de salon et le jeu communautaire. [Relais RKC de CNKD](https://www.cnkd.fun/)
+- Découvrez le serveur central de démonstration de CNKD et son serveur de tirage au sort automatisé. [Démonstration du serveur central CNKD](https://lucky.cnkd.fun/)
 
 ## Premiers pas
 
