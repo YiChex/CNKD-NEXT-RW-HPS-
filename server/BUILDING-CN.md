@@ -12,4 +12,6 @@ sh ./gradlew :Server-Core:test :Plugin-Tool:test
 
 Windows 将 `sh ./gradlew` 改为 `.\gradlew.bat`。首次构建需要 Gradle 与依赖仓库可达。构建结果分别位于 `Server-Plugin-API/build/libs`、`Plugin-Tool/build/libs`、`Server-All/build/libs`。
 
+运行核心完整测试前，将授权运行环境里的 `data/gameData/GameModularReusableClass.bin` 放到源码目录下的 `runtime-data/data/gameData/GameModularReusableClass.bin`。两项 Headless 类加载测试需要该文件。
+
 要用自己构建的 JAR 联机验证，先准备已备份的隔离实例及配套运行资源，停服后替换 JAR，保留实例配置和插件锁，再按 [部署指南](../docs/DEPLOYMENT-GUIDE-CN.md) 验证。产物 Manifest 会记录源码修订和构建时间。
