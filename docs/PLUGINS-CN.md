@@ -1,5 +1,7 @@
 # CNKD NEXT 插件目录
 
+[项目首页](../README.md) · [服务端源码与文档](../server/README.md) · [从最小示例开始](https://github.com/YiChex/cnkd-next-plugin-examples)
+
 从对应插件仓库的 Releases 下载 JAR 和 SHA-256 文件。使用前核对插件 ID、宿主版本和所需能力。新装或换版时停服备份，对实例里全部外部插件重新生成批准锁。 [插件安装与开发](PLUGIN-DEVELOPMENT-GUIDE-CN.md)
 
 | 插件 | 功能 | 宿主 | 源码与下载 |

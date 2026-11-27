@@ -1,26 +1,26 @@
-# CNKD NEXT
+# CNKD NEXT 服务端
 
-第三方铁锈战争服务端  
-基于 `RW-HPS` 长期独立优化  
-面向 `Rusted Warfare` Headless `start` 模式  
-当前文档基于单房间 Start Mode `1.1.6-BattleRoom-Test` 构建基线整理
+**简体中文** · [English (US)](README.en-US.md) · [English (UK)](README.en-GB.md) · [Français](README.fr.md) · [Русский](README.ru.md)
 
-> [!NOTE]
-> 本仓库文档面向服主、管理员和插件开发者。排位平台、云实例平台管理和 Relay 专用部署不属于本单房间使用指南的默认范围。
+基于 RW-HPS 的铁锈战争 Headless `start` 单房间服务端。公开发行 `2.3.2` 对应宿主 `1.1.24` 和插件 SDK `1.3.0`。
+
+[项目首页](../README.md) · [下载服务端](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/latest) · [部署指南](../docs/DEPLOYMENT-GUIDE-CN.md) · [源码构建](BUILDING-CN.md) · [插件目录](../docs/PLUGINS-CN.md)
+
+**插件入口** · [最小 Java/Kotlin 示例](https://github.com/YiChex/cnkd-next-plugin-examples) · [EIRS](https://github.com/YiChex/cnkd-plugin-identity-reporter/releases/latest) · [战报](https://github.com/YiChex/cnkd-match-analytics/releases/latest) · [称号与颜色](https://github.com/YiChex/cnkd-next-single-room-titles/releases/latest)
+
+标准包预装 EIRS，可搭配战报采集插件。称号插件需要提供 `player-presentation` 的配套宿主，即使两个构建的 SDK 都标为 1.3.0，也应按插件目录核对能力。 [兼容性与安装](../docs/PLUGINS-CN.md)
+
+服务端源码沿用 RW-HPS 的 **GNU AGPL v3**，保留原作者 Dr.（deng-rui）和上游贡献者署名。第三方依赖和游戏资源各按其原有许可分发。 [服务端许可证](LICENSE) · [上游许可证](https://github.com/RW-HPS/RW-HPS/blob/master/LICENSE)
 
 ## 文档导航
 
 - [安装后使用指南](runtime-data/CNKD-NEXT-AFTER-INSTALL-USER-SETUP-CN.md)
-- [单房间服务端用户手册](docs/CNKD-NEXT-USER-GUIDE-CN.md)
-- [单房间用户指南](runtime-data/SINGLE-ROOM-USER-GUIDE-CN.txt)
-- [配置说明](runtime-data/CONFIG-HELP-CN.txt)
-- [插件开发与安装](docs/THIRD_PARTY_PLUGIN_INTEGRATION_CN.md)
+- [单房间使用指南](docs/CNKD-NEXT-USER-GUIDE-CN.md)
+- [配置参考](../docs/CONFIGURATION-REFERENCE-CN.md)
+- [控制台与游戏指令](../docs/COMMAND-REFERENCE-CN.md)
 - [插件 SDK 文档](docs/plugin-sdk/README-CN.md)
-- [低延迟链路说明](docs/SINGLE_ROOM_LOW_LATENCY_HOT_PATH_AUDIT_CN.md)
-- [本次构建更新说明](docs/RELEASE-NOTES-CNKD-NEXT-20260830-CN.md)
-- [源码索引](docs/STARTMODE_SOURCE_INDEX_CN.md)
-
-游戏内 `.help` 会强制保留官方帮助群信息：`当前服务端为 CNKD NEXT 官方QQ群组帮助 910085695`。
+- [2.3.2 版本核对](../docs/RELEASE-VERSIONS-CN.md)
+- [参与贡献](../CONTRIBUTING.md)
 
 ## 当前发布基线
 
@@ -214,21 +214,7 @@ CNKD NEXT 针对纯 `start` 模式做了资源占用优化。
 
 ## Licenses
 
-本项目基于 `RW-HPS` 相关能力整理与扩展。  
-源代码许可请以发布仓库附带的 `LICENSE` 文件、源码头部声明以及上游 `RW-HPS` 许可为准。
-
-上游项目：
-
-- `RW-HPS`: <https://github.com/deng-rui/RW-HPS>
-
-请遵守以下原则：
-
-- 不隐藏、不扭曲上游 `RW-HPS` 免费且开源的事实
-- 修改、分发或发布衍生版本时保留必要署名
-- 若你的项目直接修改、参考或复用 RW-HPS 内部实现，请在项目说明中明确声明来源
-- 请仅在合法、合规、合理的场景中使用本项目
-
-**一切开发旨在学习与服务器运维实践，请勿用于非法用途。**
+服务端采用 GNU AGPL v3。修改、分发或通过网络提供修改版本时，请遵守许可证中的署名、许可声明与源码提供条款。 [服务端许可证](LICENSE) · [上游许可证](https://github.com/RW-HPS/RW-HPS/blob/master/LICENSE)
 
 ## 开始
 
@@ -238,7 +224,7 @@ CNKD NEXT 针对纯 `start` 模式做了资源占用优化。
 - 数据接口：`runtime-data/DATA-API-GUIDE-CN.txt`
 - 玩家体验说明：`runtime-data/PLAYER-EXPERIENCE-CN.txt`
 - 单房间说明：`runtime-data/SINGLE-ROOM-USER-GUIDE-CN.txt`
-- 源码索引：`docs/STARTMODE_SOURCE_INDEX_CN.md`
+- 源码构建：[BUILDING-CN.md](BUILDING-CN.md)
 
 ## 仓库结构
 

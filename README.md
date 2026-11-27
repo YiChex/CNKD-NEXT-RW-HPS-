@@ -1,10 +1,47 @@
 # CNKD NEXT
 
-面向 Rusted Warfare `Headless start` 模式的单房间服务端发行项目。
+**简体中文** · [English (US)](docs/i18n/README.en-US.md) · [English (UK)](docs/i18n/README.en-GB.md) · [Français](docs/i18n/README.fr.md) · [Русский](docs/i18n/README.ru.md)
 
-CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中的配置可理解性、原版大厅链路兼容、模组地图加载、长期运维和低延迟诊断问题。项目适合个人服主、战队活动服、公开列表服、团战服、FFA 混战服、生存地图服和固定地图活动服。
+**基于 RW-HPS 的铁锈战争单房间服务端** · [GNU AGPL v3](LICENSE)
 
-本仓库包含服务端源码、部署文档和插件目录。首次安装请选用完整 ZIP，并以附件中的配置、启动脚本和 SDK 为准。 [GitHub Releases](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases)
+[下载服务端](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/latest) · [部署指南](docs/DEPLOYMENT-GUIDE-CN.md) · [插件目录](docs/PLUGINS-CN.md) · [最小插件示例](https://github.com/YiChex/cnkd-next-plugin-examples) · [服务端源码](server/README.md)
+
+## 写给铁锈战争社区
+
+首先感谢 **RW-HPS 原作者 Dr.（deng-rui）及上游贡献者**。无论上游后来如何调整开源与维护方式，CNKD NEXT 都建立在他们留下的工作之上。我们的代码、文档和许可证会继续保留这份署名。 [RW-HPS](https://github.com/RW-HPS/RW-HPS)
+
+从 2026 年 2 月开始，CNKD 团队一直在 RW-HPS 的基础上维护这个项目。经过审慎评估，我们认为单房间服务端已经足够成熟，可以交给更多人一起维护。社区还有多少可能性，谁也说不准。现在服务端源码正式公开，我们也终于可以说一句：团队要「改行」去玩《鸣潮》了。😄
+
+欢迎任何人提交 Pull Request。改动经审核后即可合并，团队也可根据持续贡献授予相应的维护权限。随着贡献者增多，我们会考虑成立 GitHub 组织，让项目逐步交由社区共同维护。团队也计划尽快开源下一代基于 CNKD NEXT 的排位服务系统，作为铁锈战争可扩展的服务端中枢。 [提交贡献](CONTRIBUTING.md)
+
+铁锈战争战队圈是项目一路迭代的最大动力。感谢玩家 **灰太狼**，CNKD 团队最早的支持者，也感谢 **七安战队**，最早使用这套服务端的团队。向每一个试用、反馈和帮助改进服务端的社区团队致意。也真诚感谢 CNKD 云实例平台的用户和生态合作团队。千言万语，感谢有你。
+
+也向开发过程中帮上忙的人工智能工具团队致意 😄 [OpenAI Group PBC](https://openai.com/) · [杭州深度求索人工智能基础技术研究有限公司](https://www.deepseek.com/)
+
+> 愿此去山高水长，代码有归途。
+>
+> 纵使更新暂歇，星火仍照后来人。
+
+**CNKD 薯条 🍟** · [加入 QQ 交流群 910085695](https://qm.qq.com/q/YHtlMJwzUm)
+
+## 从这里找到插件
+
+| 插件 | 用途 | 源码与下载 |
+| --- | --- | --- |
+| 最小插件示例 | 用一个 `.hello` 指令学会构建、安装和审批，另附 Java/Kotlin 模板 | [源码](https://github.com/YiChex/cnkd-next-plugin-examples) · [下载](https://github.com/YiChex/cnkd-next-plugin-examples/releases/latest) |
+| EIRS | 玩家身份上报与封禁同步，标准服务端包已预装现代适配器 | [源码](https://github.com/YiChex/cnkd-plugin-identity-reporter) · [下载](https://github.com/YiChex/cnkd-plugin-identity-reporter/releases/latest) |
+| 战报与数据采集 | 对局结算数据采集，提供独立报告服务 | [源码](https://github.com/YiChex/cnkd-match-analytics) · [下载](https://github.com/YiChex/cnkd-match-analytics/releases/latest) |
+| 称号与颜色 | 战役室昵称、称号、名单与聊天配色，需要同版 Release 的外观宿主 | [源码](https://github.com/YiChex/cnkd-next-single-room-titles) · [下载](https://github.com/YiChex/cnkd-next-single-room-titles/releases/latest) |
+
+安装前请查看插件要求的宿主能力和批准锁更新方式。 [插件兼容与安装](docs/PLUGINS-CN.md)
+
+## CNKD 铁锈战争生态
+
+- 快速试用服务端能力，并用可视化面板管理配置。 [CNKD 云实例服务平台](https://cloud.cnkd.fun/)
+- 查看铁锈战争赛事和战队社区活动。 [CNKD 铁锈战争赛事系统](https://esports.cnkd.fun/)
+- 浏览地图。资源库会持续更新。 [CNKD 铁锈战争资源站](https://rw.cnkd.fun/maps)
+
+## 当前发布
 
 **当前发布版 `2.3.2`** 使用服务端 `1.1.24`，含手动 Start 默认 5 秒倒计时、普通玩家进出 S 队修复及 EIRS。下载 Assets 中的 `CNKD.NEXT.2.3.2.zip` 并解压到独立实例目录。 [下载 2.3.2](https://github.com/YiChex/CNKD-NEXT-RW-HPS/releases/tag/2.3.2) · [核对版本与 SHA-256](docs/RELEASE-VERSIONS-CN.md)
 
@@ -20,8 +57,8 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 | 插件开发与兼容规则 | [插件开发指南](docs/PLUGIN-DEVELOPMENT-GUIDE-CN.md) |
 | 服务端源码、API 与构建工具 | [源码构建](server/BUILDING-CN.md) |
 | 最小示例、EIRS、战报与称号 | [插件目录](docs/PLUGINS-CN.md) |
-| 上游来源与许可证 | [RW-HPS](https://github.com/deng-rui/RW-HPS) |
-| 官方帮助 | QQ 群 `910085695` |
+| 上游来源与许可证 | [RW-HPS](https://github.com/RW-HPS/RW-HPS) · [AGPL v3 正文](LICENSE) |
+| 官方帮助 | [加入 QQ 交流群 910085695](https://qm.qq.com/q/YHtlMJwzUm) |
 
 ## 当前定位
 
@@ -108,6 +145,6 @@ CNKD NEXT 基于 RW-HPS 能力持续维护，重点解决独立房间部署中�
 
 ## 许可证与使用边界
 
-本项目基于 RW-HPS 相关能力整理与扩展。“免授权”指服务端启动无需填写授权码。分发和修改时请保留必要署名，并遵守对应源码和组件的许可要求。 [上游 RW-HPS](https://github.com/deng-rui/RW-HPS)
+CNKD NEXT 服务端源码与上游 RW-HPS 同样采用 **GNU Affero General Public License v3（AGPL v3）**。修改、分发和通过网络提供修改版本时，请按许可证条款保留著作权与许可声明，并履行相应的源码提供义务。第三方依赖与游戏资源各自适用其原有许可。 [项目许可证](LICENSE) · [上游许可证](https://github.com/RW-HPS/RW-HPS/blob/master/LICENSE)
 
 本项目面向合法、合规的服务器部署与开发测试。文档中的低延迟、模组兼容和资源占用说明是功能边界与诊断口径，不替代在目标地图、模组、人数和网络环境下的实际验收。
