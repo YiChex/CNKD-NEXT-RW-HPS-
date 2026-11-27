@@ -1,6 +1,6 @@
 # CNKD NEXT 指令参考
 
-指令最终是否可用由当前运行模式、房间状态和 `RoomPermissionConfig.json` 决定。后台输入不带前缀；游戏内通常使用 `.` 前缀。客户端 `.help` 会强制显示 CNKD NEXT 官方 QQ 群帮助，并只列出当前可见指令。
+指令是否可用由实际 JAR、运行模式、房间状态和 `RoomPermissionConfig.json` 决定。后台输入不带前缀，游戏内通常使用 `.`。可先用 `help` 或 `.help` 查看当前入口的可见指令。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
 
 ## 1. 后台控制台指令
 
@@ -72,6 +72,8 @@ mapgc dryrun
 | `license` | 查看免授权/授权及公共列表能力诊断 |
 | `api status` | 查看 API 缓存、限流和错误指标 |
 | `plugins [id]` | 查看插件信息、能力和运行态 |
+| `plugins diagnose [id]` | 检查加载模式、插件锁和拒绝记录 |
+| `plugins health [id]` | 查看插件回调、积压和健康状态 |
 | `pluginlog status` | 查看 V2 插件日志级别、限流、队列和文件写入 |
 | `roomperm status` | 查看房主、管理员、玩家和超级管理员权限 |
 | `access status` | 查看持久封禁和管理员状态 |
@@ -126,7 +128,6 @@ lowlatency apply off
 | `maintenance clean-replays confirm [天数]` | 按保留天数清理回放 |
 | `maintenance clean-logs confirm [天数]` | 按保留天数清理日志 |
 | `plugin <参数...>` | 转发到插件命令中心 |
-| `tryupdate` | 尝试使用上游更新机制，生产环境前先备份 |
 
 ## 2. 游戏内通用指令
 
@@ -135,7 +136,7 @@ lowlatency apply off
 | 指令 | 参数 | 权限/作用 |
 |:---|:---|:---|
 | `.help` | 无 | 输出当前可见指令和官方 QQ 群帮助 |
-| `.start` | 无 | 请求开始游戏，受最低人数和权限限制 |
+| `.start` | 无 | 请求开始当前对局，受最低人数、权限和大厅状态限制 |
 | `.maps` | `[页码]` | 查看地图列表 |
 | `.map` | `<编号>` | 房主/管理员选择地图 |
 | `.status` | 无 | 查看当前房间和玩家状态 |
@@ -149,6 +150,8 @@ lowlatency apply off
 | `.surrenderstatus` | 无 | 查看团队投降申请进度 |
 
 投降相关别名仍受支持：`.surrender`、`.ff`、`.forfeit`、`.giveup`、`.resign`、`.投降`、`.放弃`。默认团队模式下优先走原版投降动作并显示团队进度；开启 `enableIndividualSurrender` 后，投降按钮和这些指令按单人投降模式处理。
+
+手动开局有独立倒计时的构建可用 `.startcancel`、后台 `gamestart status` 和 `gamestart cancel` 管理等待中的请求。当前公开 2.3.1 附件未提供这些子命令。 [版本对应关系](RELEASE-VERSIONS-CN.md)
 
 ## 3. 房主/管理员对局设置
 
@@ -188,9 +191,9 @@ lowlatency apply off
 
 队伍布局不会在对局开始后修改玩家。若存在未绑定的引擎槽位，服务端会拒绝调整并提示先刷新战役室或重置房间，以避免只清理引擎槽位造成玩家绑定错位。
 
-## 5. 精确管理员操作
+## 5. 自行调位、观战和代管
 
-下列兼容命令主要用于房主/管理员，部分在 `.help` 中隐藏，但仍受权限校验：
+普通玩家先在战役室点击自己的位置或队伍调整。具有 S 队修复的构建允许在未锁定的大厅自行进入观战，并在有空位时自行返回参战。原版界面的实际行为以客户端和构建对应关系为准。指令形式如下，解析与可用参数以前述实际构建为准：
 
 ```text
 .move <玩家位置> <目标位置> [队伍]
@@ -199,7 +202,7 @@ lowlatency apply off
 .self_team <队伍>
 ```
 
-观战目标可使用观战队伍语义。不要在对局中使用；管理员操作必须经过游戏主线程，若看到 `Lobby state changed` 或 `map_engine_not_ready`，等待房间状态稳定后再重试。
+前两条可指定其他玩家，需要相应代管权限。后两条针对自己，受位置锁、队伍锁、临时 `.teamlock` 和当前玩法约束。新版支持 `.self_team S` 进入观战，返回时可选择空闲数字位置。当前公开 2.3.1 附件在部分 S 队进出入口仍有旧版限制。 [大厅配置](CONFIGURATION-REFERENCE-CN.md#4-lobby)
 
 ## 6. 地图标点和消息长度
 

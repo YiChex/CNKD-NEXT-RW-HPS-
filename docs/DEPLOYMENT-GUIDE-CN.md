@@ -4,7 +4,9 @@
 
 ## 1. 发布包选择
 
-从 [GitHub Releases](https://github.com/YiChex/CNKD-NEXT-RW-HPS-/releases) 下载完整发布包。常见包类型：
+从 GitHub Releases 的 Assets 下载完整部署 ZIP。`2.3.1` 对应 `CNKD.NEXT.2.3.1.zip`，包内 JAR、配置与启动脚本同层次解压到指定实例目录。升级前请核对附件内的实际构建，手动 Start 倒计时与 S 队修复存在版本差异。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
+
+历史发行中常见的包类型：
 
 | 包类型 | 适用场景 | 公共列表 |
 |:---|:---|:---|
@@ -30,14 +32,13 @@ java -version
 ## 3. Linux 首次部署
 
 ```sh
-mkdir -p /opt/cnkd-next
-cd /opt/cnkd-next
-unzip CNKD-NEXT-<version>.zip
-cd CNKD-NEXT-<version>
-chmod +x start.sh start-lowmem.sh
+mkdir -p "$HOME/cnkd-next-2.3.1"
+unzip CNKD.NEXT.2.3.1.zip -d "$HOME/cnkd-next-2.3.1"
+cd "$HOME/cnkd-next-2.3.1"
+ls Server-All.jar data/ServerConfig.json start.sh
 ```
 
-编辑 `data/ServerConfig.json`，至少检查：
+编辑现有 `data/ServerConfig.json` 中的对应字段，保留其他段落。下列片段用于核对：
 
 ```json
 {
@@ -62,19 +63,19 @@ chmod +x start.sh start-lowmem.sh
 启动：
 
 ```sh
-./start.sh
+sh ./start.sh
 ```
 
 低内存实例：
 
 ```sh
-./start-lowmem.sh
+sh ./start-lowmem.sh
 ```
 
 临时指定 JVM 参数：
 
 ```sh
-JAVA_OPTS="-Xms256m -Xmx1536m" ./start.sh
+JAVA_OPTS="-Dfile.encoding=UTF-8 -Dsun.jnu.encoding=UTF-8 -Xms256m -Xmx1536m" sh ./start.sh
 ```
 
 启动后先在后台控制台执行：
@@ -94,13 +95,18 @@ maps 1
 
 1. 使用支持 UTF-8 文件名的工具解压完整包。
 2. 编辑 `data/ServerConfig.json`。
-3. 双击 `start-windows.bat`，或在包目录运行：
+3. 在包目录运行 `.\start-windows.bat`，观察日志，确认出现 `服务器已启动` 并检查游戏 TCP 端口。
+
+如果旧脚本使用 Java 17 时出现 `failed to open a new selector`，且下层异常来自 `UnixDomainSockets`，可以在同一个 PowerShell 窗口设置一个短、可写的临时目录，再运行自带脚本：
 
 ```powershell
-java -Dfile.encoding=UTF-8 -jar .\Server-All.jar
+$udsDir = Join-Path $env:SystemDrive 'tmp\cnkd-hps-uds'
+New-Item -ItemType Directory -Path $udsDir -Force | Out-Null
+$env:JAVA_TOOL_OPTIONS = "$env:JAVA_TOOL_OPTIONS -Djdk.net.unixdomain.tmpdir=$udsDir".Trim()
+.\start-windows.bat
 ```
 
-4. 观察窗口中是否出现 `模组加载完成`、`服务器已启动` 和端口信息。
+已有 `JAVA_TOOL_OPTIONS` 时请保留其他参数，并使用不含空格的短路径。新构建的脚本若已包含兼容处理，优先使用包内脚本。
 
 ## 5. 端口和连接排查
 
@@ -219,12 +225,12 @@ Windows 可直接复制整个 `data` 目录为带日期的备份。
 
 推荐流程：
 
-1. 停止旧实例并确认 Java 进程已退出。
-2. 解压新完整发布包到新目录。
-3. 只迁移经过核对的 `data/ServerConfig.json`、`RoomPermissionConfig.json`、`PersistentAccessConfig.json`、模组和地图。
-4. 不覆盖新包中的启动脚本和配置结构；缺失字段交给服务端配置迁移器补全。
-5. 启动后执行 `version`、`config check`、`startmode bootcheck`、`mods` 和 `maps 1`。
-6. 首局先使用保守配置，确认客户端可进入、可开始、可移动、可建造后再调整低延迟档位。
+1. 停止旧实例并确认 Java 进程已退出，保留原 JAR、启动脚本以及完整 `data/` 快照。配置、插件凭据和服务器身份文件随实例一并保管。
+2. 解压新完整发布包到新目录，确认 JAR 指纹与所需修复对应。
+3. 按字段合并 `ServerConfig.json`、`RoomPermissionConfig.json`、`PersistentAccessConfig.json` 中已有设置，并迁移自定义地图和模组。保留同一实例的持久身份，独立新实例使用各自的数据目录。
+4. 将插件归档、完整批准锁和插件私有配置作为一组迁移。核对宿主 SDK 版本及批准范围，避免旧锁覆盖新包的插件清单。 [插件升级与回退](PLUGIN-DEVELOPMENT-GUIDE-CN.md)
+5. 使用新包的启动脚本。启动后执行 `version`、`config check`、`startmode bootcheck`、`mods` 和 `maps 1`。若版本行只显示 `CNKD NEXT S`，用 JAR SHA-256 确认。
+6. 用房主和普通玩家各进一次大厅，检查自身换位、进入 S 和返回参战，再实测开局、移动、建造和重连。若更新后无法恢复，停服后成组恢复旧 JAR、脚本与对应数据快照。
 
 不建议在线上运行实例中直接覆盖正在使用的 JAR，也不建议把旧 Relay 目录整目录覆盖到纯 Start 包。
 
@@ -233,8 +239,7 @@ Windows 可直接复制整个 `data` 目录为带日期的备份。
 ```text
 startmode pretest
 startmode bootcheck
-lowlatency apply test
-lowlatency reset
+lowlatency status
 ```
 
 客户端至少完成一次：进入战役室、选择地图、开始游戏、移动单位、建造、地图标点、投降或结束流程。完成后执行：
@@ -290,6 +295,12 @@ lowlatency apply stable
 ### 插件日志看不到
 
 V2 插件日志使用 `pluginLogging.consoleLevel` 和 `pluginLogging.fileLevel`。默认 `INFO`；普通插件日志不应只依据 `common.log=WARN` 判断。Legacy V1 直接调用全局日志 API 时，仍受 `common.log` 阈值影响。
+
+### EIRS 是否已启用
+
+2.3.1 ZIP 预装 EIRS。用 `plugins identity.reporter` 查看版本与 `ACTIVE`，用 `plugins diagnose identity.reporter` 排查批准锁或加载问题。`ACTIVE` 表示插件已启用，云端注册、上报与封禁同步需另看插件日志和配置。
+
+EIRS 首次启动可生成 `data/plugins/data/identity.reporter/config.json` 并使用默认服务。只做本地测试或希望禁用外联时，可在该插件私有配置中将 `uploadEnabled`、`autoRegister`、`banSyncEnabled`、`banApplyToEngine` 都设为 `false`，再重启。UPLIST 是独立设置。
 
 ### 内存或启动时间不足
 

@@ -1,6 +1,6 @@
 # CNKD NEXT 配置参考
 
-主配置文件是 `data/ServerConfig.json`。配置采用分段 JSON，服务端启动时会补全缺失字段并对越界值归一化。修改前请备份，修改后完整重启；`reloadconfig` 适合刷新运行期配置，但端口和 Netty worker 等启动期参数仍需重启。
+主配置文件是 `data/ServerConfig.json`。下表默认值以 2026-11-27 核对的公开 2.3.1 附件为准。旧实例保留用户设定，新增字段的生效取决于实际 JAR。修改前请备份，端口、最大玩家槽位和 Netty worker 等启动期参数需要重启。对于可运行期更新的字段，在没有开局或赛后转换时执行 `reloadconfig`，再用 `config check` 和 `startmode bootcheck` 核对结果。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
 
 ## 配置优先级
 
@@ -19,21 +19,21 @@
 | `defStartCommand` | `start` | 启动后默认执行的命令，纯 Start 包保持 `start` |
 | `log` | `WARN` | 全局日志阈值；Legacy V1 插件日志受其影响 |
 | `port` | `5123` | 游戏 TCP 端口 |
-| `serverName` | `CNKD NEXT Start 服` | 房间和列表显示名称 |
+| `serverName` | `CNKD NEXT Single Room` | 房间和列表显示名称 |
 | `chatSenderName` | `CNKD` | 游戏消息栏系统消息发送者名称 |
 | `subtitle` | 空 | 列表辅助文本 |
 | `autoUpList` | `false` | 是否自动上传公共列表 |
-| `listStatusSuffixEnabled` | `false` | 是否给列表服名添加状态后缀 |
+| `listStatusSuffixEnabled` | `true` | 是否给列表服名添加状态后缀 |
 | `listNamePinnedCharacterCount` | `0` | 服务器名字段置顶字符数量 |
-| `listPinnedCharacterCount` | `0` | 地图字段置顶字符数量 |
+| `listPinnedCharacterCount` | `20` | 地图字段置顶字符数量 |
 | `publicListEntries` | `[]` | 多条公共列表入口 |
 | `listExperimentEnabled` | `false` | 列表实验字段开关 |
 | `listPromotionModeEnabled` | `false` | 推广展示字段开关 |
-| `listPromotionGameStatus` | `chat` | 推广模式列表状态 |
+| `listPromotionGameStatus` | 空 | 推广模式列表状态 |
 | `listPromotionPlayerCount` | `-1` | 推广模式展示人数，-1 使用安全默认值 |
 | `listPromotionMaxPlayerCount` | `-1` | 推广模式展示上限，-1 使用真实上限 |
 | `listPromotionSortBoostEnabled` | `false` | 推广排序增强 |
-| `listPromotionSortBoostPrefix` | `𒀱` | 推广排序前缀 |
+| `listPromotionSortBoostPrefix` | 空 | 推广排序前缀 |
 | `listPromotionBlankMapEnabled` | `false` | 推广模式是否隐藏列表地图字段 |
 
 列表实验和推广字段只改变上传展示，不改变真实房间。新服先保持 `autoUpList=false`，确认公网连接后再开启。
@@ -86,6 +86,8 @@
 | `modsLoadErrorPrint` | `false` | 是否打印更多模组错误信息 |
 | `saveRePlayFile` | `true` | 是否保存回放 |
 
+自动开局须满足 `autoStartMinPlayerSize`，默认人数门槛为 `-1`，即关闭自动开局。新版构建另有 `manualStartCountdownSeconds`，默认 5 秒，支持 0–300 秒，`0` 表示立即开局。当前公开 2.3.1 附件只读取自动开局字段。 [发布版本与附件核对](RELEASE-VERSIONS-CN.md)
+
 `map ping` 不按普通聊天长度拦截；普通消息仍受 `maxMessageLen` 约束。
 
 ## 4. `lobby`
@@ -118,6 +120,8 @@
 | `enableAutoKickPlayerWhenAllUnitsDestroyed` | `false` | 全单位死亡后自动移除真人玩家 |
 | `autoKickPlayerWhenAllUnitsDestroyedMessage` | 默认中文提示 | 自动移除时客户端提示文本 |
 
+位置锁、队伍锁和 `.teamlock` 独立于地图选择。新版统一修复普通玩家 S 队进出路径后，位置或队伍锁都可限制相应的自助观战操作，管理员例外分别由两项 `adminCanOverride…Rules` 控制。旧构建在部分客户端入口和退出 S 队时可能表现不同。 [版本对应关系](RELEASE-VERSIONS-CN.md)
+
 自动返回和服务器强制重置是两个不同的结束链路。只有 `enableGameOverBattleRoomReturn=true` 才会发出自动返回战役室提示并调用原版链路；保持 `false` 时使用强制重置链路。
 
 全单位死亡自动移除默认关闭。开启后只针对服务端确认失去全部单位的真人玩家，AI、观战者和断线玩家不会触发；提示文本最长 256 个字符。
@@ -126,7 +130,7 @@
 
 | 字段 | 默认值 | 作用 |
 |:---|:---|:---|
-| `enableMapLock` | `false` | 是否锁定地图 |
+| `enableMapLock` | `false` | 是否锁定地图选择。位置和队伍另由大厅规则管理 |
 | `lockMap` | 空 | 锁定地图名，不含 `.tmx` |
 | `enableModPackageMapDiscovery` | `true` | 扫描模组包地图 |
 | `modPackageMapScanMaxArchiveSizeMb` | `512` | 模组扫描体积上限，0 不限 |
@@ -174,23 +178,24 @@ V2 插件日志使用独立链路，不应只看 `common.log`：
 
 | 字段 | 默认值 | 作用 |
 |:---|:---|:---|
-| `enabled` | `false` | 启用低延迟快路径 |
-| `metricsEnabled` | `true` | 是否采样诊断指标 |
-| `summaryIntervalSeconds` | `10` | 摘要周期 |
+| `enabled` | `true` | 启用低延迟路径 |
+| `metricsEnabled` | `false` | 是否采样诊断指标 |
+| `summaryIntervalSeconds` | `30` | 摘要周期 |
 | `fastGameCommand` | `true` | 游戏操作快速路径 |
 | `preTickGameCommandDrain` | `true` | Tick 前处理操作队列 |
 | `preTickGameCommandDrainRequiresStartedRoom` | `true` | 仅开局后启用前置处理 |
-| `preTickGameCommandDrainLimit` | `256` | 每帧最多处理包数 |
+| `preTickGameCommandDrainLimit` | `128` | 每次前置处理最多取出的操作包数 |
 | `inlineGameCommandProcessing` | `false` | 实验性直处理，默认关闭 |
 | `inlineGameCommandRequiresStartedRoom` | `true` | 直处理仅限对局中 |
 | `skipPlayerOperationEvents` | `true` | 快路径跳过部分玩家事件 |
 | `skipPingActionIntercept` | `true` | 快路径跳过 map ping 拦截 |
 | `disableTurnStoneIntoGoldOnFastPath` | `true` | 快路径关闭该拦截 |
-| `serverInjectedCommandLeadTicks` | `10` | 服务端注入提前量 |
-| `hessOutboundCommandLeadTicks` | `10` | Hess 出站提前量 |
-| `headlessFpsOverride` | `0` | 0 表示沿用引擎帧率 |
-| `nettyWorkerThreadsOverride` | `0` | 0 表示沿用默认线程数 |
-| `directEventLoopWrites` | `false` | 同 eventLoop 时直接写出 |
+| `serverInjectedCommandLeadTicks` | `8` | 服务端注入提前量 |
+| `hessOutboundCommandLeadTicks` | `8` | Hess 出站提前量 |
+| `hessFrameInvariantGuardEnabled` | `true` | 启用引擎帧边界检查 |
+| `headlessFpsOverride` | `60` | 0 表示沿用引擎帧率 |
+| `nettyWorkerThreadsOverride` | `1` | 0 表示沿用默认线程数 |
+| `directEventLoopWrites` | `true` | 同 eventLoop 时直接写出 |
 
 运行期切换不会写回配置：
 
@@ -215,6 +220,7 @@ lowlatency apply off
 - `host`：房主可开始、换图、踢人、加 AI、改资金/收入/迷雾、改队伍、转移房主、暂停和使用调试操作。
 - `admin`：后台授予的管理员，默认能力接近房主，可逐项收紧。
 - `player`：普通玩家可查看状态、地图、ID、AFK 接管和发起结束投票；管理型开局设置默认关闭。
+- 普通玩家自身调位与换队还受大厅锁、玩法和房间状态约束。涉及他人的权限需要单独审查 `allowMovePlayers` 与 `allowChangeTeam`。保留同一构建的配置模板，尤其在升级 S 队修复时回归普通玩家进入和离开观战。
 - `moderation.superAdminBypass`：超级管理员是否绕过具体房间权限限制。
 - `moderation.allowAutoAdminAssignment`：是否允许首位真人自动成为房主。
 - `moderation.allowAutoAdminTransferOnLeave`：房主离开时是否自动转移。
@@ -239,3 +245,7 @@ lowlatency apply off
 ```
 
 玩家可在游戏内输入 `.myid` 获取匹配所需 ID。运行中的 `ban`、`clearbanall`、管理员授予/移除等变更默认会写回该文件。
+
+## 11. 插件独立配置
+
+公开附件预装 `identity.reporter` 1.1.0。实例首次启动后检查 `data/plugins/data/identity.reporter/config.json`。上传、自动注册、封禁同步及应用到引擎的设置分别由 `uploadEnabled`、`autoRegister`、`banSyncEnabled`、`banApplyToEngine` 控制。插件私有配置与身份随实例备份，插件 JAR 与对应批准锁一起更新。 [EIRS 启动与排查](DEPLOYMENT-GUIDE-CN.md#eirs-是否已启用)
